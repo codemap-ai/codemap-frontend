@@ -4,4 +4,6 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 
-createApp(App).use(store).use(router).mount('#app')
+import Markdown from 'vue3-markdown-it';
+
+createApp(App).use(store).use(router).use(Markdown).mount('#app')
