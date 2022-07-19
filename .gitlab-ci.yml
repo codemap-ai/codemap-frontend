@@ -1,0 +1,12 @@
+stages:
+    - build
+
+install:
+    script:
+        - npm i
+    stage: build
+
+build:
+    script:
+        - npm run build
+    stage: build
