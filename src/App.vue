@@ -24,31 +24,24 @@
       <div
           style="display: flex; justify-content: center; align-items: center; width: 3.5rem; height: 3.5rem; font-size: 1.5rem; border-bottom: 1px solid rgba(0, 0, 0, .1);">
         <span class="mdi mdi-view-headline"></span></div>
-      <div
-          style="display: flex; justify-content: center; align-items: center; width: 3.5rem; height: 3.5rem; font-size: 1.2rem; border-bottom: 1px solid rgba(0, 0, 0, .1);">
-        1
-      </div>
-      <div
-          style="display: flex; justify-content: center; align-items: center; width: 3.5rem; height: 3.5rem; font-size: 1.2rem; border-bottom: 1px solid rgba(0, 0, 0, .1);">
-        2
-      </div>
-      <div
-          style="display: flex; justify-content: center; align-items: center; width: 3.5rem; height: 3.5rem; font-size: 1.2rem; border-bottom: 1px solid rgba(0, 0, 0, .1);">
-        3
+      <div v-for="(value, chapterIndex) in chapters" :key="chapterIndex"
+           style="display: flex; justify-content: center; align-items: center; width: 3.5rem; height: 3.5rem; font-size: 1.2rem; border-bottom: 1px solid rgba(0, 0, 0, .1);">
+        {{ chapterIndex + 1 }}
       </div>
     </div>
-    <div style="display: flex; flex-direction: column; margin: 1.5rem 2rem 2.5rem 2rem; width: 100%;;">
-      <div style="color: rgba(0, 0, 0, .6);">{{ chapters[chapterIndex].title }}</div>
-      <div
+    <div style="display: flex; flex-direction: column; margin: 1.5rem 2rem 2.5rem 2rem; width: 100%;">
+      <div style="color: rgba(0, 0, 0, .6);">{{ chapterIndex + 1 }}. {{ chapters[chapterIndex].title }}</div>
+      <div class="lecture"
           style="margin-top: 1rem; background: rgba(32, 41, 83, .9); width: 100%; height: 100%; border-radius: 1rem; box-shadow: 0 0 13px -5px #000000;">
         <div
-            style="display: flex; justify-content: center; width: 100%; height: 100%; color: white; position: relative;">
+            style="display: flex; justify-content: center; width: calc(100vw - 7.2rem); height: 100%; color: white; position: relative;">
           <vue3-markdown-it
-              style="height: 100%; width: 100%; padding: 1rem 2rem; flex: 1; z-index: 999;"
+              style="height: calc(100vh - 10rem - 1px); flex: 1; overflow: auto; width: 100%; padding: .25rem 1.5rem; z-index: 998;"
               :source="chapters[chapterIndex].pages[pageIndex][0]"></vue3-markdown-it>
-          <vue3-markdown-it v-if="chapters[chapterIndex].pages[pageIndex].length === 2"
-                            style="z-index: 998; height: 100%; width: 100%; border-left: 1px solid white;  padding: 1rem 2rem; flex: 1;"
-                            :source="chapters[chapterIndex].pages[pageIndex][1]"></vue3-markdown-it>
+          <vue3-markdown-it
+              v-if="chapters[chapterIndex].pages[pageIndex].length === 2"
+              style="height: calc(100vh - 10rem - 1px); flex: 1; overflow: auto; width: 100%; border-left: 1px solid white; padding: .25rem 1.5rem; z-index: 998;"
+              :source="chapters[chapterIndex].pages[pageIndex][1]"></vue3-markdown-it>
           <div
               style="position: absolute; display: flex; width: 100%; height: 100%; align-items: center; justify-content: flex-start; margin-left: -2rem;">
             <div
@@ -81,6 +74,7 @@ export default {
       intervalId: [],
       chapterIndex: 0,
       pageIndex: 0,
+      lockedForRender: false,
       chapters: [
         {
           title: "버블 정렬",
@@ -98,10 +92,65 @@ export default {
             "07 12 42 55 78  다섯 번째 패스(pass)\n" +
             "07 12 42 55 78  정렬 끝\n" +
             "```"], // chapter 1
-            ["test2"], // chapter 2
+            ["#### C++ 코드\n" +
+            "\n" +
+            "```cpp\n" +
+            "#include <iostream>\n" +
+            "using namespace std;\n" +
+            "#include <iomanip>\n" +
+            "using std::setw;\n" +
+            "\n" +
+            "void printBubbles(const int bubbles[], const int n);\n" +
+            "void lineup(int& large, int& small);\n" +
+            "int main()\n" +
+            "{\n" +
+            "\tconst int n = 10;\n" +
+            "\tint bubbles[n] = { 2, 6, 4, 8, 10, 12, 89, 68, 45, 37 };\n" +
+            "\n" +
+            "\tcout << \"Data items in original order\\n\";\n" +
+            "\tprintBubbles(bubbles, n);\n" +
+            "\tfor (int level = 0; level < n - 1; level++) {\n" +
+            "\t\tfor (int i = 0; i < n - level - 1; i++) {\n" +
+            "\t\t\tif (bubbles[i] > bubbles[i + 1])\n" +
+            "\t\t\t\tlineup(bubbles[i], bubbles[i + 1]);\n" +
+            "\t\t}\n" +
+            "\t}\n" +
+            "\tcout << \"\\nData items in ascending order\\n\";\n" +
+            "\tprintBubbles(bubbles, n);\n" +
+            "\treturn 0;\n" +
+            "}\n" +
+            "\n" +
+            "void printBubbles(const int bubbles[], const int n) {\n" +
+            "\tfor (int i = 0; i < n; i++)\n" +
+            "\t\tcout << setw(4) << bubbles[i];\n" +
+            "\tcout << endl;\n" +
+            "}\n" +
+            "void lineup(int& large, int& small) {\n" +
+            "\tint save = large;\n" +
+            "\tlarge = small;\n" +
+            "\tsmall = save;\n" +
+            "}\n" +
+            "```", "#### 파이썬 코드\n" +
+            "\n" +
+            "```python\n" +
+            "def bubbleSort(x):\n" +
+            "\tlength = len(x)-1\n" +
+            "\tfor i in range(length):\n" +
+            "\t\tfor j in range(length-i):\n" +
+            "\t\t\tif x[j] > x[j+1]:\n" +
+            "\t\t\t\tx[j], x[j+1] = x[j+1], x[j]\n" +
+            "\treturn x\n" +
+            "```"], // chapter 2
             ["test3", "asdfdasf"], // chapter 3
           ],
         },
+        {
+          title: "병합 정렬",
+          pages: [
+            ["## 병합 정렬\n" +
+            "구간 $[1, N]$을 정렬하기 위해서, 구간 $[1, \\lfloor \\frac{N}{2} \\rfloor]$, $[\\lfloor \\frac{N}{2} \\rfloor + 1, N]$을 각각 정렬한 뒤, 이미 정렬된 두 하위 구간을 합쳐서 정렬된 배열을 만든다."],
+          ],
+        }
       ],
     };
   },
@@ -129,10 +178,15 @@ export default {
       }
     },
     async renderMathJax() {
+      if (this.lockedForRender) {
+        return;
+      }
+      this.lockedForRender = true;
       while (typeof MathJax?.typeset !== "function") {
         await new Promise(r => setTimeout(r, 50));
       }
       MathJax.typeset();
+      this.lockedForRender = false;
     },
   },
   updated() {
@@ -142,7 +196,7 @@ export default {
     // this.renderMathJax();
     this.intervalId.push(setInterval(this.renderMathJax, 100));
   },
-  beforeMount() {
+  beforeUnmount() {
     for (let id of this.intervalId) {
       clearInterval(id);
     }
@@ -163,5 +217,26 @@ export default {
 * {
   font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   box-sizing: border-box;
+}
+
+.lecture ::-webkit-scrollbar {
+  height: 7px;
+  width: 7px;
+}
+
+/* Track */
+.lecture ::-webkit-scrollbar-track {
+  background: none;
+}
+
+/* Handle */
+.lecture ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, .7);
+  border-radius: 1rem;
+}
+
+/* Handle on hover */
+.lecture ::-webkit-scrollbar-thumb:hover {
+  /*background: #cccccc;*/
 }
 </style>
