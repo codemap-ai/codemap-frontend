@@ -14,7 +14,10 @@
     <div :class="$style['lecture-view-content__sidebar']">
       <div :class="$style['lecture-view-content__sidebar-expand-btn']">
         <span class="mdi mdi-view-headline"></span></div>
-      <div v-for="(_, chapterIndex) in chapters" :key="chapterIndex" :class="$style['lecture-view-content__sidebar-menu']">{{ chapterIndex + 1 }}</div>
+      <div v-for="(_, index) in chapters" :key="index" :class="[$style['lecture-view-content__sidebar-menu'], {[$style['lecture-view-content__sidebar-menu-enabled']]: chapterIndex === index}]"
+           @click="chapterIndex = index; pageIndex = 0;">
+        {{ index + 1 }}
+      </div>
     </div>
     <div :class="$style['lecture-view-content__main']">
       <div :class="$style['lecture-view-content__main-header-text']">{{ chapterIndex + 1 }}. {{ chapters[chapterIndex].title }}</div>
@@ -25,12 +28,12 @@
         <div v-if="chapters[chapterIndex].pages[pageIndex].length > 1" :class="[$style['lecture-view-content__slide-content'], $style['lecture-view-content__slide-content-right']]">
           <vue3-markdown-it :class="$style['lecture-view-content__slide-markdown']" :source="chapters[chapterIndex].pages[pageIndex][1]"/>
         </div>
-        <div :class="[$style['lecture-view-content__slide-page-btn'], $style['lecture-view-content__slide-page-btn-left']]">
+        <div v-if="canPrevPage" :class="[$style['lecture-view-content__slide-page-btn'], $style['lecture-view-content__slide-page-btn-left']]">
           <div :class="$style['lecture-view-content__slide-page-btn-circle']" @click="prevPage">
             <span :class="['mdi', 'mdi-chevron-left', $style['lecture-view-content__slide-page-btn-icon']]"></span>
           </div>
         </div>
-        <div :class="[$style['lecture-view-content__slide-page-btn'], $style['lecture-view-content__slide-page-btn-right']]">
+        <div v-if="canNextPage" :class="[$style['lecture-view-content__slide-page-btn'], $style['lecture-view-content__slide-page-btn-right']]">
           <div :class="$style['lecture-view-content__slide-page-btn-circle']" @click="nextPage">
             <span :class="['mdi', 'mdi-chevron-right', $style['lecture-view-content__slide-page-btn-icon']]"></span>
           </div>
@@ -85,6 +88,20 @@ export default {
       }
       MathJax.typeset();
       this.lockedForRender = false;
+    },
+  },
+  computed: {
+    canPrevPage() {
+      if (this.pageIndex === 0 && this.chapterIndex === 0) {
+        return false;
+      }
+      return true;
+    },
+    canNextPage() {
+      if (this.pageIndex + 1 === this.chapters[this.chapterIndex].pages.length && this.chapterIndex + 1 === this.chapters.length) {
+        return false;
+      }
+      return true;
     },
   },
   created() {
@@ -178,7 +195,16 @@ export default {
   height: 3.5rem;
   font-size: 1.2rem;
   border-bottom: 1px solid rgba(0, 0, 0, .1);
+  transition: .4s;
+  cursor: pointer;
 }
+
+.lecture-view-content__sidebar-menu-enabled {
+  border-left: 5px solid rgb(70, 116, 238);
+  background: rgba(70, 116, 238, .2);
+  color: rgba(70, 116, 238);
+}
+
 
 /* content main section */
 .lecture-view-content__main {
@@ -191,6 +217,7 @@ export default {
 .lecture-view-content__main-header-text {
   color: rgba(0, 0, 0, .6);
 }
+
 
 /* content slide section */
 .lecture-view-content__slide {
