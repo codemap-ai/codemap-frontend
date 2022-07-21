@@ -24,12 +24,16 @@ export default {
 @import url("https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css");
 @import url("http://cdn.jsdelivr.net/gh/joungkyun/font-d2coding/d2coding.css");
 
-* {
+*:not(.MJX-TEX, .MJX-TEX *, .editor, .editor *) {
   font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   box-sizing: border-box;
 }
 
+.editor .view-lines.monaco-mouse-cursor-text div span {
+  width: auto !important;
+}
+
 .hljs, .hljs * {
-  font-family: D2Coding, 'D2 coding', monospace;
+  font-family: Consolas, D2Coding, 'D2 coding', monospace;
 }
 </style>
