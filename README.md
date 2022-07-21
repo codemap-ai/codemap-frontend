@@ -1,4 +1,4 @@
-# codemap-lecture
+# codemap
 
 ## Project setup
 ```

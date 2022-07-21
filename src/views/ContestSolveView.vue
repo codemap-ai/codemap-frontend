@@ -22,13 +22,15 @@
     </div>
     <div style="display: flex; justify-content: center; flex: 1;">
       <div style="width: calc((100vw - 3.5rem - 1px) / 2); height: calc(100vh - 3.5rem - 1px); padding: 2rem; overflow-y: auto;">
-        <div style="font-weight: 600; font-size: 2rem;">A + B</div>
-        <div style="color: rgba(0, 0, 0, .6); margin-top: 1rem;">
+        <div style="font-weight: 600; font-size: 2rem; border-bottom: 1px solid rgba(0, 0, 0, .1); padding-bottom: .5rem;">
+          A + B
+        </div>
+        <div style="color: rgba(0, 0, 0, .6); margin-top: 1.5rem;">
           <div>
             <span style="display: inline-block; width: 10rem; text-align: left;"><span class="mdi mdi-trending-up" style="margin-right: .5rem;"></span>획득 점수</span>
             <span><span style="font-weight: 700; color: black;">100</span> / 100점</span>
           </div>
-          <div style="margin-top: 1.5rem;">
+          <div style="margin-top: 1rem;">
             <span style="display: inline-block; width: 10rem; text-align: left;"><span class="mdi mdi-clock-time-three-outline" style="margin-right: .5rem;"></span>시간 제한</span>
             <span style="font-weight: 700; color: black;">1초</span>
           </div>
@@ -37,42 +39,42 @@
             <span style="font-weight: 700; color: black;">1,024MiB</span>
           </div>
         </div>
-        <div style="margin-top: 3rem; border-bottom: 1px solid rgba(0, 0, 0, .1);">
+        <div style="margin-top: 1rem; border-bottom: 1px solid rgba(0, 0, 0, .1);">
           <div style="display: flex; border-bottom: 1px solid rgba(0, 0, 0, .1);">
             <div style="border-bottom: 3px solid rgba(0, 0, 0, 1); padding: .5rem .9rem; font-weight: 600;">제출</div>
           </div>
-          <div style="display: flex; flex-direction: column; max-height: 10rem; overflow-y: auto; padding-right: 1rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
+          <div style="display: flex; flex-direction: column; max-height: 10rem; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
               <div>{{ (new Date()).toLocaleString() }}</div>
               <div style="font-weight: 700;">100점</div>
               <div>C++17</div>
               <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
               <div>{{ (new Date()).toLocaleString() }}</div>
               <div style="font-weight: 700;">100점</div>
               <div>C++17</div>
               <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
               <div>{{ (new Date()).toLocaleString() }}</div>
               <div style="font-weight: 700;">100점</div>
               <div>C++17</div>
               <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
               <div>{{ (new Date()).toLocaleString() }}</div>
               <div style="font-weight: 700;">100점</div>
               <div>C++17</div>
               <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
               <div>{{ (new Date()).toLocaleString() }}</div>
               <div style="font-weight: 700;">100점</div>
               <div>C++17</div>
               <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0;">
               <div>{{ (new Date()).toLocaleString() }}</div>
               <div style="font-weight: 700;">100점</div>
               <div>C++17</div>
@@ -80,7 +82,7 @@
             </div>
           </div>
         </div>
-        <vue3-markdown-it style="margin-top: 3rem;" :source="problems[problemIndex].statement.body"/>
+        <vue3-markdown-it style="margin-top: 2rem;" :source="problems[problemIndex].statement.body"/>
         
         <div style="font-weight: 600; font-size: 1.3rem; margin-top: 2rem; padding-bottom: .4rem; width: 100%; border-bottom: 1px solid rgba(0, 0, 0, .1);">입력</div>
         <vue3-markdown-it style="margin-top: 0;" :source="problems[problemIndex].statement.input"/>
