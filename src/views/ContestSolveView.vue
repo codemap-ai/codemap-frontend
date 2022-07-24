@@ -7,11 +7,11 @@
     </div>
     <div :class="$style['problem-solve-view-navbar__detail']">
       <span :class="$style['problem-solve-view-navbar__current-lecture']">현재 문제</span>
-      <span>A + B</span>
+      <span>{{ contestMode ? `${problemIndex + 1}. ` : "" }}A + B</span>
     </div>
   </div>
   <div :class="$style['problem-solve-view-content']">
-    <div :class="$style['problem-solve-view-content__sidebar']">
+    <div :class="$style['problem-solve-view-content__sidebar']" v-if="contestMode">
       <div :class="$style['problem-solve-view-content__sidebar-expand-btn']">
         <span class="mdi mdi-view-headline"></span></div>
       <div v-for="(_, index) in problems" :key="index"
@@ -21,22 +21,22 @@
       </div>
     </div>
     <div style="display: flex; justify-content: center; flex: 1;">
-      <div style="width: calc((100vw - 3.5rem - 1px) / 2); height: calc(100vh - 3.5rem - 1px); padding: 2rem; overflow-y: auto;">
+      <div style="flex: 1; padding: 2rem; overflow-y: auto;">
         <div style="font-weight: 600; font-size: 2rem; border-bottom: 1px solid rgba(0, 0, 0, .1); padding-bottom: .5rem;">
-          A + B
+          {{ contestMode ? `${problemIndex + 1}. ` : "" }}{{ currentProblem.title }}
         </div>
         <div style="color: rgba(0, 0, 0, .6); margin-top: 1.5rem;">
           <div>
             <span style="display: inline-block; width: 10rem; text-align: left;"><span class="mdi mdi-trending-up" style="margin-right: .5rem;"></span>획득 점수</span>
-            <span><span style="font-weight: 700; color: black;">100</span> / 100점</span>
+            <span><span style="font-weight: 700; color: black;">{{ Math.max(...submissions.map(({score}) => score)) }}</span> / 100점</span>
           </div>
           <div style="margin-top: 1rem;">
             <span style="display: inline-block; width: 10rem; text-align: left;"><span class="mdi mdi-clock-time-three-outline" style="margin-right: .5rem;"></span>시간 제한</span>
-            <span style="font-weight: 700; color: black;">1초</span>
+            <span style="font-weight: 700; color: black;">{{ currentProblem.limits.seconds }}초</span>
           </div>
           <div style="margin-top: .5rem;">
             <span style="display: inline-block; width: 10rem; text-align: left;"><span class="mdi mdi-memory" style="margin-right: .5rem;"></span>메모리 제한</span>
-            <span style="font-weight: 700; color: black;">1,024MiB</span>
+            <span style="font-weight: 700; color: black;">{{ currentProblem.limits.memory.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}MiB</span>
           </div>
         </div>
         <div style="margin-top: 1rem; border-bottom: 1px solid rgba(0, 0, 0, .1);">
@@ -44,51 +44,36 @@
             <div style="border-bottom: 3px solid rgba(0, 0, 0, 1); padding: .5rem .9rem; font-weight: 600;">제출</div>
           </div>
           <div style="display: flex; flex-direction: column; max-height: 10rem; overflow-y: auto;">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
-              <div>{{ (new Date()).toLocaleString() }}</div>
-              <div style="font-weight: 700;">100점</div>
-              <div>C++17</div>
+            <div
+                v-for="({submission_id, date, score, language}) in submissions" :key="submission_id"
+                style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);"
+            >
+              <div>{{ (new Date(date)).toLocaleString() }}</div>
+              <div style="font-weight: 700;">{{ score }}점</div>
+              <div>{{ language }}</div>
               <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
-              <div>{{ (new Date()).toLocaleString() }}</div>
-              <div style="font-weight: 700;">100점</div>
-              <div>C++17</div>
-              <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
-              <div>{{ (new Date()).toLocaleString() }}</div>
-              <div style="font-weight: 700;">100점</div>
-              <div>C++17</div>
-              <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
-              <div>{{ (new Date()).toLocaleString() }}</div>
-              <div style="font-weight: 700;">100점</div>
-              <div>C++17</div>
-              <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">
-              <div>{{ (new Date()).toLocaleString() }}</div>
-              <div style="font-weight: 700;">100점</div>
-              <div>C++17</div>
-              <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0;">
-              <div>{{ (new Date()).toLocaleString() }}</div>
-              <div style="font-weight: 700;">100점</div>
-              <div>C++17</div>
-              <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>
-            </div>
+            <!--            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">-->
+            <!--              <div>{{ (new Date()).toLocaleString() }}</div>-->
+            <!--              <div style="font-weight: 700;">100점</div>-->
+            <!--              <div>C++17</div>-->
+            <!--              <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>-->
+            <!--            </div>-->
+            <!--            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0;">-->
+            <!--              <div>{{ (new Date()).toLocaleString() }}</div>-->
+            <!--              <div style="font-weight: 700;">100점</div>-->
+            <!--              <div>C++17</div>-->
+            <!--              <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>-->
+            <!--            </div>-->
           </div>
         </div>
-        <vue3-markdown-it style="margin-top: 2rem;" :source="problems[problemIndex].statement.body"/>
+        <vue3-markdown-it style="margin-top: 2rem;" :source="currentProblem.statement.body"/>
         
         <div style="font-weight: 600; font-size: 1.3rem; margin-top: 2rem; padding-bottom: .4rem; width: 100%; border-bottom: 1px solid rgba(0, 0, 0, .1);">입력</div>
-        <vue3-markdown-it style="margin-top: 0;" :source="problems[problemIndex].statement.input"/>
+        <vue3-markdown-it style="margin-top: 0;" :source="currentProblem.statement.input"/>
         
         <div style="font-weight: 600; font-size: 1.3rem; margin-top: 2rem; padding-bottom: .4rem; width: 100%; border-bottom: 1px solid rgba(0, 0, 0, .1);">출력</div>
-        <vue3-markdown-it style="margin-top: 0;" :source="problems[problemIndex].statement.output"/>
+        <vue3-markdown-it style="margin-top: 0;" :source="currentProblem.statement.output"/>
       </div>
       <div style="position: relative; width: calc((100vw - 3.5rem - 1px) / 2); height: calc(100vh - 3.5rem - 1px); padding: 2.5rem 0 5rem 0; background: rgb(30, 30, 30);">
         <monaco-editor class="editor" language="cpp" v-model:value="code" theme="vs-dark" :options="{automaticLayout: true,}"/>
@@ -114,10 +99,15 @@ export default {
   data() {
     return {
       intervalId: [],
-      problemIndex: 0,
       lockedForRender: false,
+      
+      contestMode: true,
+      
+      problemIndex: 0,
       problems: [],
+      
       code: "#include <bits/stdc++.h>\n\nusing namespace std;\n\nint main() {\n\tcout << \"Hello, World\";\n}\n",
+      submissions: [],
     };
   },
   methods: {
@@ -133,7 +123,11 @@ export default {
       this.lockedForRender = false;
     },
   },
-  computed: {},
+  computed: {
+    currentProblem() {
+      return this.problems[this.problemIndex];
+    },
+  },
   created() {
     this.problems = [{
       title: "A + B",
@@ -141,8 +135,21 @@ export default {
         body: "두 정수 $A$와 $B$를 입력받은 다음, $A+B$를 출력하는 프로그램을 작성하시오.",
         input: "첫째 줄에 $A$와 $B$가 주어진다. ($0 \\lt A,\\ B \\lt 10$)",
         output: "첫째 줄에 $A+B$를 출력한다.",
-      }
+      },
+      limits: {
+        seconds: 1,
+        memory: 1024,
+      },
     }];
+    for (let i = 0; i < 7; i++) {
+      this.submissions.push({
+        submission_id: i,
+        date: Date.now(),
+        score: 100,
+        language: "C++17",
+      });
+    }
+    
     this.intervalId.push(setInterval(this.renderMathJax, 100));
   },
 }
@@ -208,7 +215,6 @@ export default {
 }
 
 .problem-solve-view-content__sidebar {
-  width: 3.6rem;
   height: calc(100vh - 3.5rem - 1px);
   border-right: 1px solid rgba(0, 0, 0, .1);
   background: white;

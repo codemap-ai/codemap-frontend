@@ -171,7 +171,6 @@ export default {
 }
 
 .lecture-view-content__sidebar {
-  width: 3.6rem;
   height: calc(100vh - 3.5rem - 1px);
   border-right: 1px solid rgba(0, 0, 0, .1);
   background: white;
