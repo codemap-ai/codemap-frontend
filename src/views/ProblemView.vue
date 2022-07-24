@@ -61,11 +61,11 @@
         <div :class="$style['problem-solve-view-content__main-statement-header']">출력</div>
         <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.output"/>
       </div>
-      <div style="position: relative; width: calc((100vw - 3.5rem - 1px) / 2); height: calc(100vh - 3.5rem - 1px); padding: 2.5rem 0 5rem 0; background: rgb(30, 30, 30);">
-        <monaco-editor class="editor" language="cpp" v-model:value="code" theme="vs-dark" :options="{automaticLayout: true,}"/>
-        <div style="position: absolute; display: flex; justify-content: space-between; bottom: 0; left: 0; right: 0; padding: 1rem;">
-          <div style="flex: 3; display: flex; justify-content: center; background: white; padding: 1rem; margin-right: 1rem;">C++17</div>
-          <div style="flex: 1; display: flex; justify-content: center; background: white; padding: 1rem;">제출</div>
+      <div :class="[$style['problem-solve-view-content__main-editor'], {[['problem-solve-view-content__main-editor--contest-mode']]: contestMode}]">
+        <monaco-editor class="editor" language="cpp" theme="vs-dark" :value="code" :options="{automaticLayout: true,}"/>
+        <div :class="$style['problem-solve-view-content__main-editor-menu']">
+          <div :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 3;">C++17</div>
+          <div :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 1;" @click="submitCode">제출</div>
         </div>
       </div>
     </div>
@@ -74,7 +74,6 @@
 
 <script>
 import MonacoEditor from 'monaco-editor-vue3';
-
 
 export default {
   name: 'ContestSolveView',
@@ -106,6 +105,9 @@ export default {
       }
       MathJax.typeset();
       this.lockedForRender = false;
+    },
+    async submitCode() {
+      console.log(this.code);
     },
   },
   computed: {
@@ -336,6 +338,44 @@ export default {
 
 .problem-solve-view-content__main-statement-body {
   margin-top: 0;
+}
+
+/**
+ 3.5rem + 1px는 sidebar의 width와 border 크기
+ */
+.problem-solve-view-content__main-editor {
+  position: relative;
+  width: calc(50vw);
+  height: calc(100vh - 3.5rem - 1px);
+  padding: 2.5rem 0 5rem 0;
+  background: rgb(30, 30, 30);
+}
+
+.problem-solve-view-content__main-editor--contest-mode {
+  width: calc((100vw - 3.5rem - 1px) / 2);
+}
+
+.problem-solve-view-content__main-editor-menu {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+}
+
+.problem-solve-view-content__main-editor-menu-btn {
+  display: flex;
+  justify-content: center;
+  background: white;
+  padding: 1rem;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.problem-solve-view-content__main-editor-menu-btn:nth-last-child(1) {
+  margin-right: 0;
 }
 
 </style>
