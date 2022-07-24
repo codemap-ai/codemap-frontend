@@ -20,66 +20,51 @@
         {{ index + 1 }}
       </div>
     </div>
-    <div style="display: flex; justify-content: center; flex: 1;">
-      <div style="flex: 1; padding: 2rem; overflow-y: auto;">
-        <div style="font-weight: 600; font-size: 2rem; border-bottom: 1px solid rgba(0, 0, 0, .1); padding-bottom: .5rem;">
+    <div :class="$style['problem-solve-view-content__main']">
+      <div :class="$style['problem-solve-view-content__main-problem']">
+        <div :class="$style['problem-solve-view-content__main-problem-title']">
           {{ contestMode ? `${problemIndex + 1}. ` : "" }}{{ currentProblem.title }}
         </div>
-        <div style="color: rgba(0, 0, 0, .6); margin-top: 1.5rem;">
+        <div :class="$style['problem-solve-view-content__main-problem-info']">
           <div>
-            <span style="display: inline-block; width: 10rem; text-align: left;"><span class="mdi mdi-trending-up" style="margin-right: .5rem;"></span>획득 점수</span>
-            <span><span style="font-weight: 700; color: black;">{{ Math.max(...submissions.map(({score}) => score)) }}</span> / 100점</span>
+            <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-trending-up" style="margin-right: .5rem;"></span>획득 점수</span>
+            <span><span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.max(...submissions.map(({score}) => score)) }}</span> / 100점</span>
           </div>
           <div style="margin-top: 1rem;">
-            <span style="display: inline-block; width: 10rem; text-align: left;"><span class="mdi mdi-clock-time-three-outline" style="margin-right: .5rem;"></span>시간 제한</span>
-            <span style="font-weight: 700; color: black;">{{ currentProblem.limits.seconds }}초</span>
+            <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-clock-time-three-outline" style="margin-right: .5rem;"></span>시간 제한</span>
+            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ currentProblem.limits.seconds }}초</span>
           </div>
           <div style="margin-top: .5rem;">
-            <span style="display: inline-block; width: 10rem; text-align: left;"><span class="mdi mdi-memory" style="margin-right: .5rem;"></span>메모리 제한</span>
-            <span style="font-weight: 700; color: black;">{{ currentProblem.limits.memory.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}MiB</span>
+            <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-memory" style="margin-right: .5rem;"></span>메모리 제한</span>
+            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ currentProblem.limits.memory.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}MiB</span>
           </div>
         </div>
-        <div style="margin-top: 1rem; border-bottom: 1px solid rgba(0, 0, 0, .1);">
-          <div style="display: flex; border-bottom: 1px solid rgba(0, 0, 0, .1);">
-            <div style="border-bottom: 3px solid rgba(0, 0, 0, 1); padding: .5rem .9rem; font-weight: 600;">제출</div>
+        <div :class="$style['problem-solve-view-content__main-submission']">
+          <div :class="$style['problem-solve-view-content__main-submission-header']">
+            <div :class="$style['problem-solve-view-content__main-submission-header-text']">제출</div>
           </div>
-          <div style="display: flex; flex-direction: column; max-height: 10rem; overflow-y: auto;">
-            <div
-                v-for="({submission_id, date, score, language}) in submissions" :key="submission_id"
-                style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);"
-            >
+          <div :class="$style['problem-solve-view-content__main-submission-list']">
+            <div v-for="({submission_id, date, score, language}) in submissions" :key="submission_id" :class="$style['problem-solve-view-content__main-submission-list-element']">
               <div>{{ (new Date(date)).toLocaleString() }}</div>
               <div style="font-weight: 700;">{{ score }}점</div>
               <div>{{ language }}</div>
-              <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>
+              <div :class="$style['problem-solve-view-content__main-submission-detail-btn']"><span class="mdi mdi-archive-outline"></span></div>
             </div>
-            <!--            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0; border-bottom: 1px solid rgba(0, 0, 0, .1);">-->
-            <!--              <div>{{ (new Date()).toLocaleString() }}</div>-->
-            <!--              <div style="font-weight: 700;">100점</div>-->
-            <!--              <div>C++17</div>-->
-            <!--              <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>-->
-            <!--            </div>-->
-            <!--            <div style="display: flex; justify-content: space-between; align-items: center; padding: .7rem .7rem .7rem 0;">-->
-            <!--              <div>{{ (new Date()).toLocaleString() }}</div>-->
-            <!--              <div style="font-weight: 700;">100점</div>-->
-            <!--              <div>C++17</div>-->
-            <!--              <div :class="$style.detail"><span class="mdi mdi-archive-outline"></span></div>-->
-            <!--            </div>-->
           </div>
         </div>
+        
         <vue3-markdown-it style="margin-top: 2rem;" :source="currentProblem.statement.body"/>
         
-        <div style="font-weight: 600; font-size: 1.3rem; margin-top: 2rem; padding-bottom: .4rem; width: 100%; border-bottom: 1px solid rgba(0, 0, 0, .1);">입력</div>
-        <vue3-markdown-it style="margin-top: 0;" :source="currentProblem.statement.input"/>
+        <div :class="$style['problem-solve-view-content__main-statement-header']">입력</div>
+        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.input"/>
         
-        <div style="font-weight: 600; font-size: 1.3rem; margin-top: 2rem; padding-bottom: .4rem; width: 100%; border-bottom: 1px solid rgba(0, 0, 0, .1);">출력</div>
-        <vue3-markdown-it style="margin-top: 0;" :source="currentProblem.statement.output"/>
+        <div :class="$style['problem-solve-view-content__main-statement-header']">출력</div>
+        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.output"/>
       </div>
       <div style="position: relative; width: calc((100vw - 3.5rem - 1px) / 2); height: calc(100vh - 3.5rem - 1px); padding: 2.5rem 0 5rem 0; background: rgb(30, 30, 30);">
         <monaco-editor class="editor" language="cpp" v-model:value="code" theme="vs-dark" :options="{automaticLayout: true,}"/>
         <div style="position: absolute; display: flex; justify-content: space-between; bottom: 0; left: 0; right: 0; padding: 1rem;">
           <div style="flex: 3; display: flex; justify-content: center; background: white; padding: 1rem; margin-right: 1rem;">C++17</div>
-          <!--          <div style="flex: 1; display: flex; justify-content: center; background: white; padding: 1rem; margin-right: 1rem;">테스트하기</div>-->
           <div style="flex: 1; display: flex; justify-content: center; background: white; padding: 1rem;">제출</div>
         </div>
       </div>
@@ -251,10 +236,76 @@ export default {
 
 /* content main */
 .problem-solve-view-content__main {
-  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  flex: 1;
 }
 
-.detail {
+.problem-solve-view-content__main-problem {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.problem-solve-view-content__main-problem-title {
+  font-weight: 600;
+  font-size: 2rem;
+  border-bottom: 1px solid rgba(0, 0, 0, .1);
+  padding-bottom: .5rem;
+}
+
+.problem-solve-view-content__main-problem-info {
+  color: rgba(0, 0, 0, .6);
+  margin-top: 1.5rem;
+}
+
+.problem-solve-view-content__main-problem-info-key {
+  display: inline-block;
+  width: 10rem;
+  text-align: left;
+}
+
+.problem-solve-view-content__main-problem-info-value {
+  font-weight: 700;
+  color: black;
+}
+
+.problem-solve-view-content__main-submission {
+  margin-top: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, .1);
+}
+
+.problem-solve-view-content__main-submission-header {
+  display: flex;
+  border-bottom: 1px solid rgba(0, 0, 0, .1);
+}
+
+.problem-solve-view-content__main-submission-header-text {
+  border-bottom: 3px solid rgba(0, 0, 0, 1);
+  padding: .5rem .9rem;
+  font-weight: 600;
+}
+
+.problem-solve-view-content__main-submission-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 11rem;
+  overflow-y: auto;
+}
+
+.problem-solve-view-content__main-submission-list-element {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .7rem .7rem .7rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, .1);
+}
+
+.problem-solve-view-content__main-submission-list-element:nth-last-child(1) {
+  border-bottom: none;
+}
+
+.problem-solve-view-content__main-submission-detail-btn {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -270,8 +321,21 @@ export default {
   font-size: 1.1rem;
 }
 
-.detail:hover {
+.problem-solve-view-content__main-submission-detail-btn:hover {
   background: rgba(0, 0, 0, .1);
+}
+
+.problem-solve-view-content__main-statement-header {
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin-top: 2rem;
+  padding-bottom: .4rem;
+  width: 100%;
+  border-bottom: 1px solid rgba(0, 0, 0, .1);
+}
+
+.problem-solve-view-content__main-statement-body {
+  margin-top: 0;
 }
 
 </style>

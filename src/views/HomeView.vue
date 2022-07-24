@@ -1,6 +1,6 @@
 <template>
 <div @click='this.$router.push("/lecture/");'>lecture</div>
-<div @click='this.$router.push("/contest/");'>contest</div>
+<div @click='this.$router.push("/problem/");'>problem</div>
 </template>
 
 <script>
