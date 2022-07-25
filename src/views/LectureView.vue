@@ -1,15 +1,5 @@
 <template>
-  <div :class="$style['lecture-view-navbar']">
-    <div :class="$style['lecture-view-navbar__logo']">
-      <div :class="$style['lecture-view-navbar__logo-text']">C</div>
-    </div>
-    <div :class="$style['lecture-view-navbar__dropdown-value']">강의<span style="margin-left: .5rem;" class="mdi mdi-chevron-down"></span>
-    </div>
-    <div :class="$style['lecture-view-navbar__detail']">
-      <span :class="$style['lecture-view-navbar__current-lecture']">현재 강의</span>
-      <span>정렬</span>
-    </div>
-  </div>
+  <Navbar dropdown="강의" title="정렬" title_desc="현재 강의"/>
   <div :class="$style['lecture-view-content']">
     <div :class="$style['lecture-view-content__sidebar']">
       <div :class="$style['lecture-view-content__sidebar-expand-btn']">
@@ -44,8 +34,11 @@
 </template>
 
 <script>
+import Navbar from "@/components/Navbar";
+
 export default {
   name: 'LectureView',
+  components: {Navbar},
   data() {
     return {
       intervalId: [],
@@ -112,58 +105,6 @@ export default {
 </script>
 
 <style module scoped>
-/* navbar */
-.lecture-view-navbar {
-  display: flex;
-  width: 100%;
-  border-bottom: 1px solid rgba(0, 0, 0, .1);
-}
-
-.lecture-view-navbar__logo {
-  padding: 0.7rem;
-  border-right: 1px solid rgba(0, 0, 0, .1);
-}
-
-.lecture-view-navbar__logo-text {
-  width: 2.1rem;
-  height: 2.1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  background: rgba(52, 118, 246, .2);
-  border-radius: .5rem;
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: #3476f6;
-}
-
-.lecture-view-navbar__dropdown-value {
-  font-weight: 700;
-  padding: 0.5rem 2rem;
-  border-right: 1px solid rgba(0, 0, 0, .1);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.lecture-view-navbar__detail {
-  padding: 0.5rem 1.5rem;
-  display: flex;
-  align-items: center;
-  font-weight: 500;
-  color: rgba(0, 0, 0, .6);
-}
-
-.lecture-view-navbar__current-lecture {
-  background: rgba(0, 0, 0, .15);
-  border-radius: 5rem;
-  padding: .3rem .7rem;
-  font-size: .8rem;
-  color: black;
-  margin-right: .5rem;
-}
-
 /* content body */
 .lecture-view-content {
   display: flex;

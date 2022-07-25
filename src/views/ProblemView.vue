@@ -1,15 +1,5 @@
 <template>
-  <div :class="$style['problem-solve-view-navbar']">
-    <div :class="$style['problem-solve-view-navbar__logo']">
-      <div :class="$style['problem-solve-view-navbar__logo-text']">C</div>
-    </div>
-    <div :class="$style['problem-solve-view-navbar__dropdown-value']">문제<span style="margin-left: .5rem;" class="mdi mdi-chevron-down"></span>
-    </div>
-    <div :class="$style['problem-solve-view-navbar__detail']">
-      <span :class="$style['problem-solve-view-navbar__current-lecture']">현재 문제</span>
-      <span>{{ contestMode ? `${problemIndex + 1}. ` : "" }}A + B</span>
-    </div>
-  </div>
+  <Navbar dropdown="문제" :title="`${ contestMode ? `${problemIndex + 1}. ` : '' }${currentProblem.title}`" title_desc="현재 문제"/>
   <div :class="$style['problem-solve-view-content']">
     <div :class="$style['problem-solve-view-content__sidebar']" v-if="contestMode">
       <div :class="$style['problem-solve-view-content__sidebar-expand-btn']">
@@ -74,10 +64,12 @@
 
 <script>
 import MonacoEditor from 'monaco-editor-vue3';
+import Navbar from "@/components/Navbar";
 
 export default {
-  name: 'ContestSolveView',
+  name: 'ProblemView',
   components: {
+    Navbar,
     MonacoEditor
   },
   data() {
@@ -143,58 +135,6 @@ export default {
 </script>
 
 <style module scoped>
-/* navbar */
-.problem-solve-view-navbar {
-  display: flex;
-  width: 100%;
-  border-bottom: 1px solid rgba(0, 0, 0, .1);
-}
-
-.problem-solve-view-navbar__logo {
-  padding: 0.7rem;
-  border-right: 1px solid rgba(0, 0, 0, .1);
-}
-
-.problem-solve-view-navbar__logo-text {
-  width: 2.1rem;
-  height: 2.1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  background: rgba(52, 118, 246, .2);
-  border-radius: .5rem;
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: #3476f6;
-}
-
-.problem-solve-view-navbar__dropdown-value {
-  font-weight: 700;
-  padding: 0.5rem 2rem;
-  border-right: 1px solid rgba(0, 0, 0, .1);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.problem-solve-view-navbar__detail {
-  padding: 0.5rem 1.5rem;
-  display: flex;
-  align-items: center;
-  font-weight: 500;
-  color: rgba(0, 0, 0, .6);
-}
-
-.problem-solve-view-navbar__current-lecture {
-  background: rgba(0, 0, 0, .15);
-  border-radius: 5rem;
-  padding: .3rem .7rem;
-  font-size: .8rem;
-  color: black;
-  margin-right: .5rem;
-}
-
 /* content body */
 .problem-solve-view-content {
   display: flex;
