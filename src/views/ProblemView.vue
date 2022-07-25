@@ -34,11 +34,11 @@
             <div :class="$style['problem-solve-view-content__main-submission-header-text']">제출</div>
           </div>
           <div :class="$style['problem-solve-view-content__main-submission-list']">
-            <div v-for="({submission_id, date, score, language}) in submissions" :key="submission_id" :class="$style['problem-solve-view-content__main-submission-list-element']">
-              <div>{{ (new Date(date)).toLocaleString() }}</div>
+            <div v-for="({submission_id, date, score, language}, index) in submissions" :key="submission_id" :class="$style['problem-solve-view-content__main-submission-list-element']">
+              <div>{{ date.toLocaleString() }}</div>
               <div style="font-weight: 700;">{{ score }}점</div>
               <div>{{ language }}</div>
-              <div :class="$style['problem-solve-view-content__main-submission-detail-btn']"><span class="mdi mdi-archive-outline"></span></div>
+              <div :class="$style['problem-solve-view-content__main-submission-detail-btn']" @click="submissionIndex = index;"><span class="mdi mdi-archive-outline"></span></div>
             </div>
           </div>
         </div>
@@ -58,6 +58,36 @@
           <div :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 1;" @click="submitCode">제출</div>
         </div>
       </div>
+    </div>
+  </div>
+  <div v-if="currentSubmission !== null"
+       style="position: fixed; top: 0; bottom: 0; left: 0; right: 0; z-index: 1000; background: rgba(0, 0, 0, .2); backdrop-filter: blur(2px); width: 100vw; height: 100vh; display: flex; justify-content: center; align-content: center; align-items: center;"
+       @click.stop="submissionIndex = -1">
+    <div style="width: 80vw; height: 70vh; background: white; padding: 1.5rem; overflow-y: auto; box-shadow: 0 0 13px -20px #000000;" @click.stop="">
+      <div style="display: flex; justify-content: space-between;">
+        <div style="flex: 1;">
+          <div style="font-weight: 500; font-size: 1.8rem; margin-top: .3rem;">제출 결과</div>
+          <div style="margin-top: .5rem;">제출 시간 : {{ currentSubmission.date.toLocaleString() }}</div>
+          <div style="margin-top: 2rem; color: rgba(0, 0, 0, .7);">
+            <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-trending-up" style="margin-right: .5rem;"></span>획득 점수</span>
+            <span><span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ currentSubmission.score }}</span> / 100점</span>
+          </div>
+          <div style="margin-top: 1rem; color: rgba(0, 0, 0, .7)">
+            <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-clock-time-three-outline" style="margin-right: .5rem;"></span>실행 시간</span>
+            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.floor(currentSubmission.execute_time * 1000) / 1000 }}초</span>
+          </div>
+          <div style="margin-top: .5rem; color: rgba(0, 0, 0, .7)">
+            <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-memory" style="margin-right: .5rem;"></span>사용 메모리</span>
+            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.floor(currentSubmission.used_memory / 1024 * 1000) / 1000 }}MiB</span>
+          </div>
+          <div style="font-weight: 500; font-size: 1.2rem; margin-top: 3rem;">코드 ({{ currentSubmission.language }})</div>
+        </div>
+        <div @click="submissionIndex = -1" style="color: rgba(0, 0, 0, .8); cursor: pointer; font-size: 2rem;">
+          <span class="mdi mdi-close"></span>
+        </div>
+      </div>
+      <monaco-editor :value="currentSubmission.code" theme="vs-dark" class="editor" language="cpp" style="width: calc(80vw - 4.2rem); margin: 1rem 0 2rem 0;"
+                     :options="{automaticLayout: true, readOnly: true, scrollBeyondLastLine: false, minimap: {enabled: false},}"></monaco-editor>
     </div>
   </div>
 </template>
@@ -84,6 +114,7 @@ export default {
       
       code: "#include <bits/stdc++.h>\n\nusing namespace std;\n\nint main() {\n\tcout << \"Hello, World\";\n}\n",
       submissions: [],
+      submissionIndex: -1,
     };
   },
   methods: {
@@ -106,6 +137,9 @@ export default {
     currentProblem() {
       return this.problems[this.problemIndex];
     },
+    currentSubmission() {
+      return this.submissions[this.submissionIndex] ?? null;
+    },
   },
   created() {
     this.problems = [{
@@ -123,9 +157,12 @@ export default {
     for (let i = 0; i < 7; i++) {
       this.submissions.push({
         submission_id: i,
-        date: Date.now(),
-        score: 100,
+        date: new Date(),
+        score: 100 - parseInt(Math.random() * 99),
         language: "C++17",
+        used_memory: Math.random() * 1000_000,
+        execute_time: Math.random(),
+        code: this.code,
       });
     }
     
@@ -138,6 +175,8 @@ export default {
 /* content body */
 .problem-solve-view-content {
   display: flex;
+  height: calc(100vh - 3.5rem - 1px);
+  overflow: hidden;
   /*background: rgb(96, 109, 173, .1);*/
 }
 

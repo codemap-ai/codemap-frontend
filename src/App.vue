@@ -33,6 +33,10 @@ export default {
   width: auto !important;
 }
 
+.monaco-editor-overlaymessage.fadeIn.fadeOut {
+  display: none !important;
+}
+
 .hljs, .hljs * {
   font-family: Consolas, D2Coding, 'D2 coding', monospace;
 }
