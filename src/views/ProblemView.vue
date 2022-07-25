@@ -52,9 +52,10 @@
         <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.output"/>
       </div>
       <div :class="[$style['problem-solve-view-content__main-editor'], {[['problem-solve-view-content__main-editor--contest-mode']]: contestMode}]">
-        <monaco-editor class="editor" language="cpp" theme="vs-dark" :value="code" :options="{automaticLayout: true,}"/>
+        <monaco-editor class="editor" language="cpp" theme="vs-dark" :value="code" :options="{automaticLayout: true, scrollBeyondLastLine: false,}"/>
         <div :class="$style['problem-solve-view-content__main-editor-menu']">
-          <div :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 3;">C++17</div>
+          <Dropdown :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 3;" :options="[['C++17'], ['Java'], ['Python']]" :direction="true" :default_value="language" @change="changeLanguage"/>
+<!--          <div :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 3;">C++17</div>-->
           <div :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 1;" @click="submitCode">제출</div>
         </div>
       </div>
@@ -95,10 +96,12 @@
 <script>
 import MonacoEditor from 'monaco-editor-vue3';
 import Navbar from "@/components/Navbar";
+import Dropdown from "@/components/Dropdown";
 
 export default {
   name: 'ProblemView',
   components: {
+    Dropdown,
     Navbar,
     MonacoEditor
   },
@@ -113,6 +116,8 @@ export default {
       problems: [],
       
       code: "#include <bits/stdc++.h>\n\nusing namespace std;\n\nint main() {\n\tcout << \"Hello, World\";\n}\n",
+      language: "C++17",
+      
       submissions: [],
       submissionIndex: -1,
     };
@@ -132,6 +137,9 @@ export default {
     async submitCode() {
       console.log(this.code);
     },
+    changeLanguage(value) {
+      this.language = value;
+    }
   },
   computed: {
     currentProblem() {
