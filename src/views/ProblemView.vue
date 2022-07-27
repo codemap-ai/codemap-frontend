@@ -168,7 +168,7 @@ export default {
       }
       this.submitDisabled = true;
       
-      let submissionId = (await api.submit(3, -1, "c++17", this.code)).submissionId;
+      let submissionId = (await api.submit(this.currentProblem.problemId, this.contestId, "c++17", this.code)).submissionId;
       let {id} = this.socket.subscribe("/topic/chat/room/" + submissionId, message => {
         this.socket.unsubscribe(id);
         this.subscribeIds.delete(id);
@@ -232,6 +232,7 @@ export default {
         problemIds.push(id);
       }
     } else {
+      this.contestId = -1;
       problemIds = [this.problemId];
     }
     for (let id of problemIds) {
