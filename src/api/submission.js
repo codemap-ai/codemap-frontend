@@ -1,7 +1,7 @@
 import axios from "./localAxios";
 
 const refineSubmissions = result =>
-	result.body.map(obj => {
+	result.map(obj => {
 		obj.submitDate = new Date(obj.submitDate);
 		return obj;
 	}).sort((a, b) => a.submitDate < b.submitDate ? 1 : -1);

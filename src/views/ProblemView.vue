@@ -168,14 +168,15 @@ export default {
       }
       this.submitDisabled = true;
       
-      let submissionId = await api.submit(3, -1, "c++17", this.code);
+      let submissionId = (await api.submit(3, -1, "c++17", this.code)).submissionId;
       let {id} = this.socket.subscribe("/topic/chat/room/" + submissionId, message => {
         this.socket.unsubscribe(id);
+        this.subscribeIds.delete(id);
         
         this.loadSubmissions(); // 채점 완료
         this.submitDisabled = false;
       });
-      this.subscribeIds.push(id);
+      this.subscribeIds.add(id);
       await this.loadSubmissions(); // 채점 중
     },
     changeLanguage(value) {
