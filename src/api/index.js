@@ -1,4 +1,7 @@
 import submission from "@/api/submission";
 import submit from "@/api/submit";
+import problem from "@/api/problem";
+import problemset from "@/api/problemset";
+import contests from "@/api/contests";
 
-export default {submissions: submission, submit};
+export default {submission, submit, problem, problemset, contests};

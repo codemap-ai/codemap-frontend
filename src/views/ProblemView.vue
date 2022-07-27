@@ -1,12 +1,13 @@
 <template>
-  <Navbar dropdown="문제" :title="`${ contestMode ? `${problemIndex + 1}. ` : '' }${currentProblem.title}`" title_desc="현재 문제"/>
-  <div :class="$style['problem-solve-view-content']">
+  <Navbar v-if="problemIndex > -1" dropdown="문제" :title="`${ contestMode ? `${problemIndex + 1}. ` : '' }${currentProblem.title}`" title_desc="현재 문제"/>
+  <div v-if="problemIndex === -1"></div>
+  <div v-else :class="$style['problem-solve-view-content']">
     <div :class="$style['problem-solve-view-content__sidebar']" v-if="contestMode">
       <div :class="$style['problem-solve-view-content__sidebar-expand-btn']">
         <span class="mdi mdi-view-headline"></span></div>
       <div v-for="(_, index) in problems" :key="index"
            :class="[$style['problem-solve-view-content__sidebar-menu'], {[$style['problem-solve-view-content__sidebar-menu-enabled']]: problemIndex === index}]"
-           @click="problemIndex = index;">
+           @click="moveProblem(index);">
         {{ index + 1 }}
       </div>
     </div>
@@ -22,11 +23,11 @@
           </div>
           <div style="margin-top: 1rem;">
             <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-clock-time-three-outline" style="margin-right: .5rem;"></span>시간 제한</span>
-            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ currentProblem.limits.seconds }}초</span>
+            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.floor(currentProblem.timeLimit * 100) / 100 }}초</span>
           </div>
           <div style="margin-top: .5rem;">
             <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-memory" style="margin-right: .5rem;"></span>메모리 제한</span>
-            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ currentProblem.limits.memory.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}MiB</span>
+            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.floor(currentProblem.memoryLimit / 1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}MiB</span>
           </div>
         </div>
         <div :class="$style['problem-solve-view-content__main-submission']">
@@ -48,13 +49,13 @@
           </div>
         </div>
         
-        <vue3-markdown-it style="margin-top: 2rem;" :source="currentProblem.statement.body"/>
+        <vue3-markdown-it style="margin-top: 2rem;" :source="currentProblem.body"/>
         
-        <div :class="$style['problem-solve-view-content__main-statement-header']">입력</div>
+<!--        <div :class="$style['problem-solve-view-content__main-statement-header']">입력</div>
         <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.input"/>
         
         <div :class="$style['problem-solve-view-content__main-statement-header']">출력</div>
-        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.output"/>
+        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.output"/>-->
       </div>
       <div :class="[$style['problem-solve-view-content__main-editor'], {[['problem-solve-view-content__main-editor--contest-mode']]: contestMode}]">
         <MonacoEditor class="editor" language="cpp" theme="vs-dark" :value="code" :options="{automaticLayout: true, scrollBeyondLastLine: false,}" @change="onChangeCode"/>
@@ -110,6 +111,7 @@ import SockJS from 'sockjs-client';
 import Navbar from "@/components/Navbar";
 import Dropdown from "@/components/Dropdown";
 import api from "@/api";
+import axios from "axios";
 
 export default {
   name: 'ProblemView',
@@ -124,14 +126,19 @@ export default {
       lockedForRender: false,
       
       contestMode: true,
+      problemSetId: 1,
       contestId: -1,
       
-      problemIndex: 0,
+      problemIndex: -1,
+      problemId: -1,
       problems: [],
-      
-      code: "#include <bits/stdc++.h>\n\nusing namespace std;\n\nint main() {\n\tcout << \"Hello, World\";\n}\n",
+  
+      defaultCode: "#include <bits/stdc++.h>\n\nusing namespace std;\n\nint main() {\n\tcout << \"Hello, World\";\n}\n",
+      code: "",
       language: "C++17",
+      
       submitDisabled: true,
+      subscribeIds: null,
       
       submissions: [],
       submissionIndex: -1,
@@ -163,18 +170,42 @@ export default {
       
       let submissionId = await api.submit(3, -1, "c++17", this.code);
       let {id} = this.socket.subscribe("/topic/chat/room/" + submissionId, message => {
-        console.log(JSON.parse(message.body));
         this.socket.unsubscribe(id);
+        
         this.loadSubmissions(); // 채점 완료
         this.submitDisabled = false;
       });
+      this.subscribeIds.push(id);
       await this.loadSubmissions(); // 채점 중
     },
     changeLanguage(value) {
       this.language = value;
     },
     async loadSubmissions() {
-      this.submissions = await api.submissions.getSubmissionsByProblemId(3);
+      this.submissions = await api.submission.getSubmissionsByProblemId(this.currentProblem.problemId);
+    },
+    async moveProblem(index) {
+      if (index === this.problemIndex) {
+        return;
+      }
+      
+      // TODO: save code
+      this.code = this.defaultCode;
+      
+      this.problemIndex = index;
+      this.submissionIndex = -1;
+      this.submitDisabled = true;
+      
+      if (this.socket !== null) {
+        for (let id of this.subscribeIds) {
+          this.socket.unsubscribe(id);
+        }
+      }
+      this.subscribeIds = new Set();
+      
+      this.submissions = [];
+      await this.loadSubmissions();
+      this.submitDisabled = false;
     },
   },
   computed: {
@@ -185,22 +216,26 @@ export default {
       return this.submissions[this.submissionIndex] ?? null;
     },
   },
-  created() {
-    this.problems = [{
-      id: 3,
-      title: "A + B",
-      statement: {
-        body: "두 정수 $A$와 $B$를 입력받은 다음, $A+B$를 출력하는 프로그램을 작성하시오.",
-        input: "첫째 줄에 $A$와 $B$가 주어진다. ($0 \\lt A,\\ B \\lt 10$)",
-        output: "첫째 줄에 $A+B$를 출력한다.",
-      },
-      limits: {
-        seconds: 1,
-        memory: 1024,
-      },
-    }];
-    
-    this.loadSubmissions().then(() => this.submitDisabled = false);
+  async created() {
+    let problemIds = [];
+    if (this.contestMode) {
+      let problemSetId;
+      try {
+        problemSetId = (await api.contests.getContestById(this.contestId)).problemSetId;
+      } catch (e) {
+        this.contestId = await api.contests.startContest(this.problemSetId);
+        problemSetId = (await api.contests.getContestById(this.contestId)).problemSetId;
+      }
+      
+      for (let id of (await api.problemset.getProblemSetById(problemSetId)).problem_list.split(",")) { // TODO: remove split
+        problemIds.push(id);
+      }
+    } else {
+      problemIds = [this.problemId];
+    }
+    for (let id of problemIds) {
+      this.problems.push(await api.problem.getProblemById(id));
+    }
     
     this.intervalId.push(setInterval(this.renderMathJax, 100));
     this.socket = Stomp.over(new SockJS("http://43.200.180.31:8081/ws/chat"));
@@ -208,6 +243,9 @@ export default {
       this.sockedConnected = true;
     }, () => {
     });
+    
+    this.subscribeIds = new Set();
+    await this.moveProblem(0);
   },
   beforeUnmount() {
     this.socket.disconnect();

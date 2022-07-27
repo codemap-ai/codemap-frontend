@@ -1,6 +1,6 @@
 <template>
   <div :class="$style['navbar']">
-    <div :class="$style['navbar__logo']">
+    <div :class="$style['navbar__logo']" @click="$router.push('/')">
       <div :class="$style['navbar__logo-text']">C</div>
     </div>
     <Dropdown :options="dropdownOptions" :default_value="dropdown" :direction="false" height="3.5rem"/>
@@ -37,6 +37,7 @@ export default {
 .navbar__logo {
   padding: 0.7rem;
   border-right: 1px solid rgba(0, 0, 0, .1);
+  cursor: pointer;
 }
 
 .navbar__logo-text {
