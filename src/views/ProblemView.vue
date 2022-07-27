@@ -18,7 +18,7 @@
         <div :class="$style['problem-solve-view-content__main-problem-info']">
           <div>
             <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-trending-up" style="margin-right: .5rem;"></span>획득 점수</span>
-            <span><span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.max(...submissions.map(({score}) => score)) }}</span> / 100점</span>
+            <span><span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.max(...submissions.map(({score}) => score), 0) }}</span> / 100점</span>
           </div>
           <div style="margin-top: 1rem;">
             <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-clock-time-three-outline" style="margin-right: .5rem;"></span>시간 제한</span>
@@ -34,11 +34,15 @@
             <div :class="$style['problem-solve-view-content__main-submission-header-text']">제출</div>
           </div>
           <div :class="$style['problem-solve-view-content__main-submission-list']">
-            <div v-for="({submission_id, date, score, language}, index) in submissions" :key="submission_id" :class="$style['problem-solve-view-content__main-submission-list-element']">
-              <div>{{ date.toLocaleString() }}</div>
-              <div style="font-weight: 700;">{{ score }}점</div>
-              <div>{{ language }}</div>
+            <div v-if="submissions.length > 0" v-for="({submissionId, submitDate, score, usedLanguage, result}, index) in submissions" :key="submissionId" :class="$style['problem-solve-view-content__main-submission-list-element']">
+              <div style="flex: 5;">{{ submitDate.toLocaleString() }}</div>
+              <div v-if="result !== 'Waiting'" style="font-weight: 700; flex: 3;">{{ score }}점</div>
+              <div v-else style="flex: 3;">채점 중</div>
+              <div style="flex: 3;">{{ usedLanguage }}</div>
               <div :class="$style['problem-solve-view-content__main-submission-detail-btn']" @click="submissionIndex = index;"><span class="mdi mdi-archive-outline"></span></div>
+            </div>
+            <div v-else :class="$style['problem-solve-view-content__main-submission-list-element']" style="color: rgba(0, 0, 0, .6); font-style: italic; font-size: .9rem; margin: .2rem 0;">
+              제출 기록 없음
             </div>
           </div>
         </div>
@@ -52,10 +56,11 @@
         <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.output"/>
       </div>
       <div :class="[$style['problem-solve-view-content__main-editor'], {[['problem-solve-view-content__main-editor--contest-mode']]: contestMode}]">
-        <monaco-editor class="editor" language="cpp" theme="vs-dark" :value="code" :options="{automaticLayout: true, scrollBeyondLastLine: false,}"/>
+        <MonacoEditor class="editor" language="cpp" theme="vs-dark" :value="code" :options="{automaticLayout: true, scrollBeyondLastLine: false,}" @change="onChangeCode"/>
         <div :class="$style['problem-solve-view-content__main-editor-menu']">
-          <Dropdown :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 3;" :options="[['C++17'], ['Java'], ['Python']]" :direction="true" :default_value="language" @change="changeLanguage"/>
-<!--          <div :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 3;">C++17</div>-->
+          <Dropdown :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 3;" :options="[['C++17'], ['Java'], ['Python']]" :direction="true" :default_value="language"
+                    @change="changeLanguage"/>
+          <!--          <div :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 3;">C++17</div>-->
           <div :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 1;" @click="submitCode">제출</div>
         </div>
       </div>
@@ -68,26 +73,26 @@
       <div style="display: flex; justify-content: space-between;">
         <div style="flex: 1;">
           <div style="font-weight: 500; font-size: 1.8rem; margin-top: .3rem;">제출 결과</div>
-          <div style="margin-top: .5rem;">제출 시간 : {{ currentSubmission.date.toLocaleString() }}</div>
+          <div style="margin-top: .5rem;">제출 시간 : {{ currentSubmission.submitDate.toLocaleString() }}</div>
           <div style="margin-top: 2rem; color: rgba(0, 0, 0, .7);">
             <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-trending-up" style="margin-right: .5rem;"></span>획득 점수</span>
             <span><span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ currentSubmission.score }}</span> / 100점</span>
           </div>
           <div style="margin-top: 1rem; color: rgba(0, 0, 0, .7)">
             <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-clock-time-three-outline" style="margin-right: .5rem;"></span>실행 시간</span>
-            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.floor(currentSubmission.execute_time * 1000) / 1000 }}초</span>
+            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.floor(currentSubmission.executeTime * 1000) / 1000 }}초</span>
           </div>
           <div style="margin-top: .5rem; color: rgba(0, 0, 0, .7)">
             <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-memory" style="margin-right: .5rem;"></span>사용 메모리</span>
-            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.floor(currentSubmission.used_memory / 1024 * 1000) / 1000 }}MiB</span>
+            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.floor(currentSubmission.usedMemory / 1024 * 1000) / 1000 }}MiB</span>
           </div>
-          <div style="font-weight: 500; font-size: 1.2rem; margin-top: 3rem;">코드 ({{ currentSubmission.language }})</div>
+          <div style="font-weight: 500; font-size: 1.2rem; margin-top: 3rem;">코드 ({{ currentSubmission.usedLanguage }})</div>
         </div>
         <div @click="submissionIndex = -1" style="color: rgba(0, 0, 0, .8); cursor: pointer; font-size: 2rem;">
           <span class="mdi mdi-close"></span>
         </div>
       </div>
-      <monaco-editor :value="currentSubmission.code" theme="vs-dark" class="editor" language="cpp" style="width: calc(80vw - 4.2rem); margin: 1rem 0 2rem 0;"
+      <monaco-editor :value="currentSubmission.submitCode" theme="vs-dark" class="editor" language="cpp" style="width: calc(80vw - 4.2rem); margin: 1rem 0 2rem 0;"
                      :options="{automaticLayout: true, readOnly: true, scrollBeyondLastLine: false, minimap: {enabled: false},}"></monaco-editor>
     </div>
   </div>
@@ -95,8 +100,12 @@
 
 <script>
 import MonacoEditor from 'monaco-editor-vue3';
+import {Stomp} from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+
 import Navbar from "@/components/Navbar";
 import Dropdown from "@/components/Dropdown";
+import api from "@/api";
 
 export default {
   name: 'ProblemView',
@@ -111,6 +120,7 @@ export default {
       lockedForRender: false,
       
       contestMode: true,
+      contestId: -1,
       
       problemIndex: 0,
       problems: [],
@@ -120,9 +130,15 @@ export default {
       
       submissions: [],
       submissionIndex: -1,
+      
+      socket: null,
+      sockedConnected: false,
     };
   },
   methods: {
+    onChangeCode(value) {
+      this.code = value;
+    },
     async renderMathJax() {
       if (this.lockedForRender) {
         return;
@@ -135,11 +151,20 @@ export default {
       this.lockedForRender = false;
     },
     async submitCode() {
-      console.log(this.code);
+      let submissionId = await api.submit(3, -1, "c++17", this.code);
+      let {id} = this.socket.subscribe("/topic/chat/room/" + submissionId, message => {
+        console.log(JSON.parse(message.body));
+        this.socket.unsubscribe(id);
+        this.loadSubmissions();
+      });
+      await this.loadSubmissions();
     },
     changeLanguage(value) {
       this.language = value;
-    }
+    },
+    async loadSubmissions() {
+      this.submissions = await api.submissions.getSubmissionsByProblemId(3);
+    },
   },
   computed: {
     currentProblem() {
@@ -151,6 +176,7 @@ export default {
   },
   created() {
     this.problems = [{
+      id: 3,
       title: "A + B",
       statement: {
         body: "두 정수 $A$와 $B$를 입력받은 다음, $A+B$를 출력하는 프로그램을 작성하시오.",
@@ -162,19 +188,18 @@ export default {
         memory: 1024,
       },
     }];
-    for (let i = 0; i < 7; i++) {
-      this.submissions.push({
-        submission_id: i,
-        date: new Date(),
-        score: 100 - parseInt(Math.random() * 99),
-        language: "C++17",
-        used_memory: Math.random() * 1000_000,
-        execute_time: Math.random(),
-        code: this.code,
-      });
-    }
+    
+     this.loadSubmissions();
     
     this.intervalId.push(setInterval(this.renderMathJax, 100));
+    this.socket = Stomp.over(new SockJS("http://43.200.180.31:8081/ws/chat"));
+    this.socket.connect({}, () => {
+      this.sockedConnected = true;
+    }, () => {
+    });
+  },
+  beforeUnmount() {
+    this.socket.disconnect();
   },
 }
 </script>
@@ -292,6 +317,17 @@ export default {
 
 .problem-solve-view-content__main-submission-list-element:nth-last-child(1) {
   border-bottom: none;
+}
+
+.problem-solve-view-content__main-submission-list-element > * {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.problem-solve-view-content__main-submission-list-element > *:nth-child(1) {
+  display: block;
 }
 
 .problem-solve-view-content__main-submission-detail-btn {
