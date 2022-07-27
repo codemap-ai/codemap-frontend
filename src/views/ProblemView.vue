@@ -34,14 +34,15 @@
             <div :class="$style['problem-solve-view-content__main-submission-header-text']">제출</div>
           </div>
           <div :class="$style['problem-solve-view-content__main-submission-list']">
-            <div v-if="submissions.length > 0" v-for="({submissionId, submitDate, score, usedLanguage, result}, index) in submissions" :key="submissionId" :class="$style['problem-solve-view-content__main-submission-list-element']">
+            <div v-if="submissions.length > 0" v-for="({submissionId, submitDate, score, usedLanguage, result}, index) in submissions" :key="submissionId"
+                 :class="$style['problem-solve-view-content__main-submission-list-element']">
               <div style="flex: 5;">{{ submitDate.toLocaleString() }}</div>
-              <div v-if="result !== 'Waiting'" style="font-weight: 700; flex: 3;">{{ score }}점</div>
+              <div v-if="result !== 'WAITING'" style="font-weight: 700; flex: 3;">{{ score }}점</div>
               <div v-else style="flex: 3;">채점 중</div>
               <div style="flex: 3;">{{ usedLanguage }}</div>
               <div :class="$style['problem-solve-view-content__main-submission-detail-btn']" @click="submissionIndex = index;"><span class="mdi mdi-archive-outline"></span></div>
             </div>
-            <div v-else :class="$style['problem-solve-view-content__main-submission-list-element']" style="color: rgba(0, 0, 0, .6); font-style: italic; font-size: .9rem; margin: .2rem 0;">
+            <div v-else :class="$style['problem-solve-view-content__main-submission-list-element']" style="color: rgba(0, 0, 0, .6); font-style: italic; font-size: .9rem; margin: .5rem 0;">
               제출 기록 없음
             </div>
           </div>
@@ -61,7 +62,10 @@
           <Dropdown :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 3;" :options="[['C++17'], ['Java'], ['Python']]" :direction="true" :default_value="language"
                     @change="changeLanguage"/>
           <!--          <div :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 3;">C++17</div>-->
-          <div :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 1;" @click="submitCode">제출</div>
+          <div
+              :class="[$style['problem-solve-view-content__main-editor-menu-btn'], $style['problem-solve-view-content__main-editor-menu-btn-submit'], {[$style['problem-solve-view-content__main-editor-menu-btn-submit--disabled']]: submitDisabled}]"
+              style="flex: 1;" @click="submitCode">제출
+          </div>
         </div>
       </div>
     </div>
@@ -127,6 +131,7 @@ export default {
       
       code: "#include <bits/stdc++.h>\n\nusing namespace std;\n\nint main() {\n\tcout << \"Hello, World\";\n}\n",
       language: "C++17",
+      submitDisabled: true,
       
       submissions: [],
       submissionIndex: -1,
@@ -151,13 +156,19 @@ export default {
       this.lockedForRender = false;
     },
     async submitCode() {
+      if (this.submitDisabled) {
+        return;
+      }
+      this.submitDisabled = true;
+      
       let submissionId = await api.submit(3, -1, "c++17", this.code);
       let {id} = this.socket.subscribe("/topic/chat/room/" + submissionId, message => {
         console.log(JSON.parse(message.body));
         this.socket.unsubscribe(id);
-        this.loadSubmissions();
+        this.loadSubmissions(); // 채점 완료
+        this.submitDisabled = false;
       });
-      await this.loadSubmissions();
+      await this.loadSubmissions(); // 채점 중
     },
     changeLanguage(value) {
       this.language = value;
@@ -189,7 +200,7 @@ export default {
       },
     }];
     
-     this.loadSubmissions();
+    this.loadSubmissions().then(() => this.submitDisabled = false);
     
     this.intervalId.push(setInterval(this.renderMathJax, 100));
     this.socket = Stomp.over(new SockJS("http://43.200.180.31:8081/ws/chat"));
@@ -395,6 +406,16 @@ export default {
   padding: 1rem;
   margin-right: 1rem;
   cursor: pointer;
+}
+
+.problem-solve-view-content__main-editor-menu-btn-submit {
+  background: rgba(62, 87, 181, 1);
+  color: white;
+}
+
+.problem-solve-view-content__main-editor-menu-btn-submit--disabled {
+  background: rgba(62, 87, 181, .6);
+  cursor: not-allowed;
 }
 
 .problem-solve-view-content__main-editor-menu-btn:nth-last-child(1) {
