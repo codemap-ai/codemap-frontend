@@ -228,7 +228,7 @@ export default {
         problemSetId = (await api.contests.getContestById(this.contestId)).problemSetId;
       }
       
-      for (let id of (await api.problemset.getProblemSetById(problemSetId)).problem_list.split(",")) { // TODO: remove split
+      for (let id of (await api.problemset.getProblemSetById(problemSetId)).problem_list) {
         problemIds.push(id);
       }
     } else {
