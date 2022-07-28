@@ -1,8 +1,8 @@
 <template>
-  <div :class="$style['dropdown__value']" @click="toggleDropdown" :style="`position: relative; height: ${height};`">
-    {{ value }}<span style="margin: 0 .25rem;" :class="['mdi', (dropdownOpened ^ direction) ? 'mdi-chevron-up' : 'mdi-chevron-down']"></span>
+  <div :class="$style['dropdown__value']" :style="`position: relative; height: ${height};`" @click="toggleDropdown">
+    {{ value }}<span :class="['mdi', (dropdownOpened ^ direction) ? 'mdi-chevron-up' : 'mdi-chevron-down']" style="margin: 0 .25rem;"></span>
     <div v-if="dropdownOpened" :class="[$style['dropdown__expand-section'], {[$style['dropdown__expand-section--reverse']]: direction}]">
-      <div v-for="([display, cb], index) in options" :key="index" :style="`height: ${height};`" :class="[$style['dropdown__expand-value'], $style['dropdown__value']]" @click="click(display, cb);">
+      <div v-for="([display, cb], index) in options" :key="index" :class="[$style['dropdown__expand-value'], $style['dropdown__value']]" :style="`height: ${height};`" @click="click(display, cb);">
         {{ display }}
       </div>
     </div>
@@ -41,7 +41,7 @@ export default {
 }
 </script>
 
-<style scoped module>
+<style module scoped>
 .dropdown__value {
   font-weight: 700;
   padding: 0.5rem 2rem;

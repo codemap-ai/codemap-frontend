@@ -3,7 +3,7 @@
     <div :class="$style['navbar__logo']" @click="$router.push('/')">
       <div :class="$style['navbar__logo-text']">C</div>
     </div>
-    <Dropdown :options="dropdownOptions" :default_value="dropdown" :direction="false" height="3.5rem"/>
+    <Dropdown :default_value="dropdown" :direction="false" :options="dropdownOptions" height="3.5rem"/>
     <div :class="$style['navbar__detail']">
       <span :class="$style['navbar__current-lecture']">{{ title_desc }}</span>
       <span>{{ title }}</span>
@@ -26,7 +26,7 @@ export default {
 }
 </script>
 
-<style scoped module>
+<style module scoped>
 /* navbar */
 .navbar {
   display: flex;

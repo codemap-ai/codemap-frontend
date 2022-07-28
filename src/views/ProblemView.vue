@@ -1,8 +1,8 @@
 <template>
-  <Navbar v-if="problemIndex > -1" dropdown="문제" :title="`${ contestMode ? `${problemIndex + 1}. ` : '' }${currentProblem.title}`" title_desc="현재 문제"/>
+  <Navbar v-if="problemIndex > -1" :title="`${ contestMode ? `${problemIndex + 1}. ` : '' }${currentProblem.title}`" dropdown="문제" title_desc="현재 문제"/>
   <div v-if="problemIndex === -1"></div>
   <div v-else :class="$style['problem-solve-view-content']">
-    <div :class="$style['problem-solve-view-content__sidebar']" v-if="contestMode">
+    <div v-if="contestMode" :class="$style['problem-solve-view-content__sidebar']">
       <div :class="$style['problem-solve-view-content__sidebar-expand-btn']">
         <span class="mdi mdi-view-headline"></span></div>
       <div v-for="(_, index) in problems" :key="index"
@@ -35,7 +35,7 @@
             <div :class="$style['problem-solve-view-content__main-submission-header-text']">제출</div>
           </div>
           <div :class="$style['problem-solve-view-content__main-submission-list']">
-            <div v-if="submissions.length > 0" v-for="({submissionId, submitDate, score, usedLanguage, result}, index) in submissions" :key="submissionId"
+            <div v-for="({submissionId, submitDate, score, usedLanguage, result}, index) in submissions" v-if="submissions.length > 0" :key="submissionId"
                  :class="$style['problem-solve-view-content__main-submission-list-element']">
               <div style="flex: 5;">{{ submitDate.toLocaleString() }}</div>
               <div v-if="result !== 'WAITING'" style="font-weight: 700; flex: 3;">{{ score }}점</div>
@@ -49,18 +49,18 @@
           </div>
         </div>
         
-        <vue3-markdown-it style="margin-top: 2rem;" :source="currentProblem.body"/>
+        <vue3-markdown-it :source="currentProblem.body" style="margin-top: 2rem;"/>
         
-<!--        <div :class="$style['problem-solve-view-content__main-statement-header']">입력</div>
-        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.input"/>
-        
-        <div :class="$style['problem-solve-view-content__main-statement-header']">출력</div>
-        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.output"/>-->
+        <!--        <div :class="$style['problem-solve-view-content__main-statement-header']">입력</div>
+                <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.input"/>
+                
+                <div :class="$style['problem-solve-view-content__main-statement-header']">출력</div>
+                <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.output"/>-->
       </div>
       <div :class="[$style['problem-solve-view-content__main-editor'], {[['problem-solve-view-content__main-editor--contest-mode']]: contestMode}]">
-        <MonacoEditor class="editor" language="cpp" theme="vs-dark" :value="code" :options="{automaticLayout: true, scrollBeyondLastLine: false,}" @change="onChangeCode"/>
+        <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}" :value="code" class="editor" language="cpp" theme="vs-dark" @change="onChangeCode"/>
         <div :class="$style['problem-solve-view-content__main-editor-menu']">
-          <Dropdown :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 3;" :options="[['C++17'], ['Java'], ['Python']]" :direction="true" :default_value="language"
+          <Dropdown :class="$style['problem-solve-view-content__main-editor-menu-btn']" :default_value="language" :direction="true" :options="[['C++17'], ['Java'], ['Python']]" style="flex: 3;"
                     @change="changeLanguage"/>
           <!--          <div :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 3;">C++17</div>-->
           <div
@@ -93,12 +93,12 @@
           </div>
           <div style="font-weight: 500; font-size: 1.2rem; margin-top: 3rem;">코드 ({{ currentSubmission.usedLanguage }})</div>
         </div>
-        <div @click="submissionIndex = -1" style="color: rgba(0, 0, 0, .8); cursor: pointer; font-size: 2rem;">
+        <div style="color: rgba(0, 0, 0, .8); cursor: pointer; font-size: 2rem;" @click="submissionIndex = -1">
           <span class="mdi mdi-close"></span>
         </div>
       </div>
-      <monaco-editor :value="currentSubmission.submitCode" theme="vs-dark" class="editor" language="cpp" style="width: calc(80vw - 4.2rem); margin: 1rem 0 2rem 0;"
-                     :options="{automaticLayout: true, readOnly: true, scrollBeyondLastLine: false, minimap: {enabled: false},}"></monaco-editor>
+      <monaco-editor :options="{automaticLayout: true, readOnly: true, scrollBeyondLastLine: false, minimap: {enabled: false},}" :value="currentSubmission.submitCode" class="editor" language="cpp" style="width: calc(80vw - 4.2rem); margin: 1rem 0 2rem 0;"
+                     theme="vs-dark"></monaco-editor>
     </div>
   </div>
 </template>
@@ -111,7 +111,6 @@ import SockJS from 'sockjs-client';
 import Navbar from "@/components/Navbar";
 import Dropdown from "@/components/Dropdown";
 import api from "@/api";
-import axios from "axios";
 
 export default {
   name: 'ProblemView',
@@ -132,7 +131,7 @@ export default {
       problemIndex: -1,
       problemId: -1,
       problems: [],
-  
+      
       defaultCode: "#include <bits/stdc++.h>\n\nusing namespace std;\n\nint main() {\n\tcout << \"Hello, World\";\n}\n",
       code: "",
       language: "C++17",
@@ -185,17 +184,30 @@ export default {
     async loadSubmissions() {
       this.submissions = await api.submission.getSubmissionsByProblemId(this.currentProblem.problemId);
     },
+    async saveCode() {
+      if (this.problemIndex !== -1) {
+        await api.code.save(this.currentProblem.problemId, this.contestId, this.code);
+      }
+    },
     async moveProblem(index) {
       if (index === this.problemIndex) {
         return;
       }
       
-      // TODO: save code
-      this.code = this.defaultCode;
+      if (this.problemIndex !== -1) {
+        this.saveCode(); // 코드 저장은 기다릴 필요가 없음
+      }
       
       this.problemIndex = index;
       this.submissionIndex = -1;
       this.submitDisabled = true;
+      
+      this.code = "";
+      try {
+        this.code = await api.code.load(this.currentProblem.problemId, this.contestId) ?? this.defaultCode;
+      } catch (e) {
+        this.code = this.defaultCode;
+      }
       
       if (this.socket !== null) {
         for (let id of this.subscribeIds) {
@@ -240,6 +252,8 @@ export default {
     }
     
     this.intervalId.push(setInterval(this.renderMathJax, 100));
+    this.intervalId.push(setInterval(this.saveCode, 1000 * 10));
+    
     this.socket = Stomp.over(new SockJS("http://43.200.180.31:8081/ws/chat"));
     this.socket.connect({}, () => {
       this.sockedConnected = true;
