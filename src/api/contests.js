@@ -5,9 +5,9 @@ const getContestById = async (contest_id) =>
 		headers: {},
 	});
 
-const startContest = async (problem_set_id) =>
+const startContest = async (problemSetId) =>
 	await axios.post(`/contests/start/`, JSON.stringify({
-		problemSetId: problem_set_id,
+		problemSetId,
 	}), {
 		headers: {
 			"Content-Type": "application/json",

@@ -74,7 +74,7 @@
   <div v-if="currentSubmission !== null"
        style="position: fixed; top: 0; bottom: 0; left: 0; right: 0; z-index: 1000; background: rgba(0, 0, 0, .2); backdrop-filter: blur(2px); width: 100vw; height: 100vh; display: flex; justify-content: center; align-content: center; align-items: center;"
        @click.stop="submissionIndex = -1">
-    <div style="width: 80vw; height: 70vh; background: white; padding: 1.5rem; overflow-y: auto; box-shadow: 0 0 13px -20px #000000;" @click.stop="">
+    <div style="width: 80vw; height: 70vh; background: white; padding: 1.5rem; overflow-y: auto; box-shadow: 0 0 35px -20px #000000;" @click.stop="">
       <div style="display: flex; justify-content: space-between;">
         <div style="flex: 1;">
           <div style="font-weight: 500; font-size: 1.8rem; margin-top: .3rem;">제출 결과</div>
@@ -126,20 +126,22 @@ export default {
       intervalId: [],
       lockedForRender: false,
       
-      contestMode: true,
-      problemSetId: 1,
-      contestId: -1,
+      contestMode: true, // TODO: props or router param / computed
+      
+      contestId: -1, // TODO: props or router param
+      problemId: -1, // TODO: props or router param
+      
+      problemSetId: 1, // contestMode이면 contestId에 의해 정해져야 함
       
       problemIndex: -1,
-      problemId: -1,
       problems: [],
       
-      defaultCode: "#include <bits/stdc++.h>\n\nusing namespace std;\n\nint main() {\n\tcout << \"Hello, World\";\n}\n",
+      defaultCode: "#include <bits/stdc++.h>\n\nusing namespace std;\n\nint main() {\n\tcout << \"Hello, World\";\n}\n", // TODO: 언어별 default code, 별도 분리
       code: "",
-      language: "C++17",
+      language: "C++17", // TODO: enum으로 별도 분리
       
       submitDisabled: true,
-      subscribeIds: null,
+      subscribeIds: new Set(),
       
       submissions: [],
       submissionIndex: -1,
@@ -175,10 +177,11 @@ export default {
         this.subscribeIds.delete(id);
         
         this.loadSubmissions(); // 채점 완료
-        this.submitDisabled = false;
       });
       this.subscribeIds.add(id);
       await this.loadSubmissions(); // 채점 중
+      
+      this.submitDisabled = false;
     },
     changeLanguage(value) {
       this.language = value;
@@ -197,7 +200,7 @@ export default {
       }
       
       if (this.problemIndex !== -1) {
-        this.saveCode(); // 코드 저장은 기다릴 필요가 없음
+        this.saveCode(); // 코드 저장은 기다릴 필요(await)가 없음
       }
       
       this.problemIndex = index;
@@ -257,12 +260,17 @@ export default {
     this.intervalId.push(setInterval(this.saveCode, 1000 * 10));
     
     this.socket = Stomp.over(new SockJS("http://43.200.180.31:8081/ws/chat"));
+    let originalDebug = this.socket.debug;
+    this.socket.debug = (...message) => {
+      if (process.env.NODE_ENV === "development") {
+        originalDebug(...message);
+      }
+    }; // 디버그 비활성화
     this.socket.connect({}, () => {
       this.sockedConnected = true;
     }, () => {
     });
     
-    this.subscribeIds = new Set();
     await this.moveProblem(0);
   },
   beforeUnmount() {

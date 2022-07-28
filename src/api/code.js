@@ -1,20 +1,20 @@
 import axios from "./localAxios";
 
-const save = async (problem_id, contest_id, code) =>
+const save = async (problemId, contestId, code) =>
 	await axios.post(`/code/save`, JSON.stringify({
+		problemId,
+		contestId,
 		code,
-		contestId: contest_id,
-		problemId: problem_id
 	}), {
 		headers: {
 			"Content-Type": "application/json",
 		},
 	});
 
-const load = async (problem_id, contest_id) =>
+const load = async (problemId, contestId) =>
 	await axios.post(`/code/load`, JSON.stringify({
-		contestId: contest_id,
-		problemId: problem_id
+		problemId,
+		contestId,
 	}), {
 		headers: {
 			"Content-Type": "application/json",

@@ -1,5 +1,5 @@
 import axios from "./localAxios";
-import judgeResults from "@/constants/judgeResults";
+import judgeResults from "@/constants/JudgeResults";
 
 const refineSubmissions = result =>
 	result.map(obj => {
