@@ -38,8 +38,8 @@
             <div v-for="({submissionId, submitDate, score, usedLanguage, result}, index) in submissions" v-if="submissions.length > 0" :key="submissionId"
                  :class="$style['problem-solve-view-content__main-submission-list-element']">
               <div style="flex: 5;">{{ submitDate.toLocaleString() }}</div>
-              <div v-if="result !== 'WAITING'" style="font-weight: 700; flex: 3;">{{ score }}점</div>
-              <div v-else style="flex: 3;">채점 중</div>
+              <div v-if="result.displayScore && score > 0" style="font-weight: 700; flex: 3;">{{ score }}점<span v-if="result.displayText !== null" :style="`color: ${result.color}; font-weight: normal; margin-left: .2rem;`"> ({{ result.displayText }})</span></div>
+              <div v-else :style="`flex: 3; color: ${result.color}; font-weight: ${result.bold ? 600 : 400};`">{{ result.displayText }}</div>
               <div style="flex: 3;">{{ usedLanguage }}</div>
               <div :class="$style['problem-solve-view-content__main-submission-detail-btn']" @click="submissionIndex = index;"><span class="mdi mdi-archive-outline"></span></div>
             </div>
@@ -97,7 +97,8 @@
           <span class="mdi mdi-close"></span>
         </div>
       </div>
-      <monaco-editor :options="{automaticLayout: true, readOnly: true, scrollBeyondLastLine: false, minimap: {enabled: false},}" :value="currentSubmission.submitCode" class="editor" language="cpp" style="width: calc(80vw - 4.2rem); margin: 1rem 0 2rem 0;"
+      <monaco-editor :options="{automaticLayout: true, readOnly: true, scrollBeyondLastLine: false, minimap: {enabled: false},}" :value="currentSubmission.submitCode" class="editor" language="cpp"
+                     style="width: calc(80vw - 4.2rem); margin: 1rem 0 2rem 0;"
                      theme="vs-dark"></monaco-editor>
     </div>
   </div>
@@ -110,6 +111,7 @@ import SockJS from 'sockjs-client';
 
 import Navbar from "@/components/Navbar";
 import Dropdown from "@/components/Dropdown";
+
 import api from "@/api";
 
 export default {

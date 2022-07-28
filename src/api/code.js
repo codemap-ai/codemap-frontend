@@ -12,13 +12,13 @@ const save = async (problem_id, contest_id, code) =>
 	});
 
 const load = async (problem_id, contest_id) =>
-	(await axios.post(`/code/load`, JSON.stringify({
+	await axios.post(`/code/load`, JSON.stringify({
 		contestId: contest_id,
 		problemId: problem_id
 	}), {
 		headers: {
 			"Content-Type": "application/json",
 		},
-	})).code;
+	});
 
 export default {load, save};
