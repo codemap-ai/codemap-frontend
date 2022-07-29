@@ -23,17 +23,20 @@ export default {
     toggleDropdown() {
       this.dropdownOpened = !this.dropdownOpened;
     },
-    click(value, cb) {
+    click(value, ext) {
       this.value = value;
+      if (typeof ext === "function") {
+        ext();
+      } else {
+        value = ext;
+      }
       this.$emit("change", value);
-      cb();
     }
   },
   created() {
-    for (let value of this.options) {
-      if (typeof value[1] !== "function") {
-        value.push(() => {
-        });
+    for (let values of this.options) {
+      if (typeof values[1] === "undefined") {
+        values.push(values[0]);
       }
     }
     this.value = this.default_value;

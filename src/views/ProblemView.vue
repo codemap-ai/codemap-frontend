@@ -40,7 +40,7 @@
               <div style="flex: 5;">{{ submitDate.toLocaleString() }}</div>
               <div v-if="result.displayScore && score > 0" style="font-weight: 700; flex: 3;">{{ score }}점<span v-if="result.displayText !== null" :style="`color: ${result.color}; font-weight: normal; margin-left: .2rem;`"> ({{ result.displayText }})</span></div>
               <div v-else :style="`flex: 3; color: ${result.color}; font-weight: ${result.bold ? 600 : 400};`">{{ result.displayText }}</div>
-              <div style="flex: 3;">{{ usedLanguage }}</div>
+              <div style="flex: 3;">{{ toDisplayText(usedLanguage) }}</div>
               <div :class="$style['problem-solve-view-content__main-submission-detail-btn']" @click="submissionIndex = index;"><span class="mdi mdi-archive-outline"></span></div>
             </div>
             <div v-else :class="$style['problem-solve-view-content__main-submission-list-element']" style="color: rgba(0, 0, 0, .6); font-style: italic; font-size: .9rem; margin: .5rem 0;">
@@ -60,7 +60,7 @@
       <div :class="[$style['problem-solve-view-content__main-editor'], {[['problem-solve-view-content__main-editor--contest-mode']]: contestMode}]">
         <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}" :value="code" class="editor" language="cpp" theme="vs-dark" @change="onChangeCode"/>
         <div :class="$style['problem-solve-view-content__main-editor-menu']">
-          <Dropdown :class="$style['problem-solve-view-content__main-editor-menu-btn']" :default_value="language" :direction="true" :options="[['C++17'], ['Java'], ['Python']]" style="flex: 3;"
+          <Dropdown :class="$style['problem-solve-view-content__main-editor-menu-btn']" :default_value="language" :direction="true" :options="languages" style="flex: 3;"
                     @change="changeLanguage"/>
           <!--          <div :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 3;">C++17</div>-->
           <div
@@ -91,7 +91,7 @@
             <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-memory" style="margin-right: .5rem;"></span>사용 메모리</span>
             <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.floor(currentSubmission.usedMemory / 1024 * 1000) / 1000 }}MiB</span>
           </div>
-          <div style="font-weight: 500; font-size: 1.2rem; margin-top: 3rem;">코드 ({{ currentSubmission.usedLanguage }})</div>
+          <div style="font-weight: 500; font-size: 1.2rem; margin-top: 3rem;">코드 ({{ toDisplayText(currentSubmission.usedLanguage) }})</div>
         </div>
         <div style="color: rgba(0, 0, 0, .8); cursor: pointer; font-size: 2rem;" @click="submissionIndex = -1">
           <span class="mdi mdi-close"></span>
@@ -113,6 +113,7 @@ import Navbar from "@/components/Navbar";
 import Dropdown from "@/components/Dropdown";
 
 import api from "@/api";
+import Languages from "@/constants/Languages";
 
 export default {
   name: 'ProblemView',
@@ -138,7 +139,8 @@ export default {
       
       defaultCode: "#include <bits/stdc++.h>\n\nusing namespace std;\n\nint main() {\n\tcout << \"Hello, World\";\n}\n", // TODO: 언어별 default code, 별도 분리
       code: "",
-      language: "C++17", // TODO: enum으로 별도 분리
+      languages: [],
+      language: "",
       
       submitDisabled: true,
       subscribeIds: new Set(),
@@ -151,6 +153,7 @@ export default {
     };
   },
   methods: {
+    toDisplayText: Languages.toDisplayText,
     onChangeCode(value) {
       this.code = value;
     },
@@ -171,7 +174,7 @@ export default {
       }
       this.submitDisabled = true;
       
-      let submissionId = (await api.submit(this.currentProblem.problemId, this.contestId, "c++17", this.code)).submissionId;
+      let submissionId = (await api.submit(this.currentProblem.problemId, this.contestId, this.language, this.code)).submissionId;
       let {id} = this.socket.subscribe("/topic/chat/room/" + submissionId, message => {
         this.socket.unsubscribe(id);
         this.subscribeIds.delete(id);
@@ -270,6 +273,9 @@ export default {
       this.sockedConnected = true;
     }, () => {
     });
+    
+    this.languages = Array.from(Object.keys(Languages.values)).map(key => [Languages.values[key], key]);
+    this.language = this.languages[0][0];
     
     await this.moveProblem(0);
   },
