@@ -1,8 +1,8 @@
 <template>
   <div :class="$style['dropdown__value']" :style="`position: relative; height: ${height};`" @click="toggleDropdown">
-    {{ value }}<span :class="['mdi', (dropdownOpened ^ direction) ? 'mdi-chevron-up' : 'mdi-chevron-down']" style="margin: 0 .25rem;"></span>
+    {{ options.find(v => v[1] === value || v[0] === value)[0] }}<span :class="['mdi', (dropdownOpened ^ direction) ? 'mdi-chevron-up' : 'mdi-chevron-down']" style="margin: 0 .25rem;"></span>
     <div v-if="dropdownOpened" :class="[$style['dropdown__expand-section'], {[$style['dropdown__expand-section--reverse']]: direction}]">
-      <div v-for="([display, cb], index) in options" :key="index" :class="[$style['dropdown__expand-value'], $style['dropdown__value']]" :style="`height: ${height};`" @click="click(display, cb);">
+      <div v-for="([display, value, cb], index) in options" :key="index" :class="[$style['dropdown__expand-value'], $style['dropdown__value']]" :style="`height: ${height};`" @click="click(value, cb);">
         {{ display }}
       </div>
     </div>
@@ -23,22 +23,16 @@ export default {
     toggleDropdown() {
       this.dropdownOpened = !this.dropdownOpened;
     },
-    click(value, ext) {
+    click(value, cb) {
       this.value = value;
-      if (typeof ext === "function") {
-        ext();
-      } else {
-        value = ext;
-      }
       this.$emit("change", value);
+      
+      if (typeof cb === "function") {
+        cb();
+      }
     }
   },
   created() {
-    for (let values of this.options) {
-      if (typeof values[1] === "undefined") {
-        values.push(values[0]);
-      }
-    }
     this.value = this.default_value;
   },
 }

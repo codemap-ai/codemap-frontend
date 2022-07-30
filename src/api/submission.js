@@ -5,8 +5,11 @@ const refineSubmissions = result =>
 	result.map(obj => {
 		obj.submitDate = new Date(obj.submitDate);
 		obj.result = judgeResults[obj.result];
+		if (obj.result === undefined) {
+			return null;
+		}
 		return obj;
-	}).sort((a, b) => a.submitDate < b.submitDate ? 1 : -1);
+	}).filter(a => a !== null).sort((a, b) => a.submitDate < b.submitDate ? 1 : -1);
 
 const getSubmissionsByProblemId = async (problem_id) =>
 	refineSubmissions(await axios.get(`/submissions/problem/${problem_id}`, {

@@ -20,7 +20,10 @@ export default {
   props: ['dropdown', 'title_desc', 'title'],
   data() {
     return {
-      dropdownOptions: [["문제", () => this.$router.push("/problem/")], ["강의", () => this.$router.push("/lecture/")]],
+      dropdownOptions: [
+        ["문제", "문제", () => this.$router.push("/problem/")],
+        ["강의", "강의", () => this.$router.push("/lecture/")]
+      ],
     };
   },
 }

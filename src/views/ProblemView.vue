@@ -38,7 +38,12 @@
             <div v-for="({submissionId, submitDate, score, usedLanguage, result}, index) in submissions" v-if="submissions.length > 0" :key="submissionId"
                  :class="$style['problem-solve-view-content__main-submission-list-element']">
               <div style="flex: 5;">{{ submitDate.toLocaleString() }}</div>
-              <div v-if="result.displayScore && score > 0" style="font-weight: 700; flex: 3;">{{ score }}점<span v-if="result.displayText !== null" :style="`color: ${result.color}; font-weight: normal; margin-left: .2rem;`"> ({{ result.displayText }})</span></div>
+              <div v-if="result.displayScore && score > 0" style="font-weight: 700; flex: 3;">
+                {{ score }}점
+                <span v-if="result.displayText !== null" :style="`color: ${result.color}; font-weight: normal; margin-left: .2rem;`">
+                ({{ result.displayText }})
+                </span>
+              </div>
               <div v-else :style="`flex: 3; color: ${result.color}; font-weight: ${result.bold ? 600 : 400};`">{{ result.displayText }}</div>
               <div style="flex: 3;">{{ toDisplayText(usedLanguage) }}</div>
               <div :class="$style['problem-solve-view-content__main-submission-detail-btn']" @click="submissionIndex = index;"><span class="mdi mdi-archive-outline"></span></div>
@@ -57,20 +62,34 @@
                 <div :class="$style['problem-solve-view-content__main-statement-header']">출력</div>
                 <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.output"/>-->
       </div>
-      <div :class="[$style['problem-solve-view-content__main-editor'], {[['problem-solve-view-content__main-editor--contest-mode']]: contestMode}]">
-        <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}" :value="code" class="editor" language="cpp" theme="vs-dark" @change="onChangeCode"/>
+      <div :class="[$style['problem-solve-view-content__main-editor']]">
+        <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
+                      :class="{[$style['problem-solve-view-content__main-editor--contest-mode']]: contestMode, [$style['problem-solve-view-content__main-editor--test-mode']]: testMode}" :value="code"
+                      class="editor" language="cpp" theme="vs-dark" @change="onChangeCode"/>
+        <div v-if="testMode" :class="$style['problem-solve-view-content__main-editor--test-mode']">
+          <div :class="$style['problem-solve-view-content__main-editor--test-input']">
+            <span class="mdi mdi-chevron-right" style="display: inline-block; margin-right: .5rem;"></span>표준 입력 (stdin)
+          </div>
+          <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
+                        :class="[{[$style['problem-solve-view-content__main-editor--contest-mode']]: contestMode}, $style['problem-solve-view-content__main-editor--test-mode-second']]"
+                        :value="testInput" class="editor" language="plaintext" theme="vs-dark" @change="onChangeTestInput"/>
+        </div>
         <div :class="$style['problem-solve-view-content__main-editor-menu']">
           <Dropdown :class="$style['problem-solve-view-content__main-editor-menu-btn']" :default_value="language" :direction="true" :options="languages" style="flex: 3;"
                     @change="changeLanguage"/>
-          <!--          <div :class="$style['problem-solve-view-content__main-editor-menu-btn']" style="flex: 3;">C++17</div>-->
+          <div
+              :class="[$style['problem-solve-view-content__main-editor-menu-btn']]"
+              style="flex: 1; background: lightgrey;" @click="testMode = !testMode">테스트 모드 {{ testMode ? "끄기" : "켜기" }}
+          </div>
           <div
               :class="[$style['problem-solve-view-content__main-editor-menu-btn'], $style['problem-solve-view-content__main-editor-menu-btn-submit'], {[$style['problem-solve-view-content__main-editor-menu-btn-submit--disabled']]: submitDisabled}]"
-              style="flex: 1;" @click="submitCode">제출
+              style="flex: 1;" @click="submitCode"> {{ testMode ? "테스트" : "제출" }}
           </div>
         </div>
       </div>
     </div>
   </div>
+  <!-- 테스트 제출에 대해서 인풋/아웃풋 보여주기 -->
   <div v-if="currentSubmission !== null"
        style="position: fixed; top: 0; bottom: 0; left: 0; right: 0; z-index: 1000; background: rgba(0, 0, 0, .2); backdrop-filter: blur(2px); width: 100vw; height: 100vh; display: flex; justify-content: center; align-content: center; align-items: center;"
        @click.stop="submissionIndex = -1">
@@ -141,6 +160,8 @@ export default {
       code: "",
       languages: [],
       language: "",
+      testMode: false,
+      testInput: "",
       
       submitDisabled: true,
       subscribeIds: new Set(),
@@ -156,6 +177,9 @@ export default {
     toDisplayText: Languages.toDisplayText,
     onChangeCode(value) {
       this.code = value;
+    },
+    onChangeTestInput(value) {
+      this.testInput = value;
     },
     async renderMathJax() {
       if (this.lockedForRender) {
@@ -174,7 +198,7 @@ export default {
       }
       this.submitDisabled = true;
       
-      let submissionId = (await api.submit(this.currentProblem.problemId, this.contestId, this.language, this.code)).submissionId;
+      let submissionId = (await api.submit(this.currentProblem.problemId, this.contestId, this.language, this.code, this.testMode, this.testInput)).submissionId;
       let {id} = this.socket.subscribe("/topic/chat/room/" + submissionId, message => {
         this.socket.unsubscribe(id);
         this.subscribeIds.delete(id);
@@ -275,7 +299,7 @@ export default {
     });
     
     this.languages = Array.from(Object.keys(Languages.values)).map(key => [Languages.values[key], key]);
-    this.language = this.languages[0][0];
+    this.language = this.languages[0][1];
     
     await this.moveProblem(0);
   },
@@ -449,14 +473,35 @@ export default {
  */
 .problem-solve-view-content__main-editor {
   position: relative;
-  width: calc(50vw);
-  height: calc(100vh - 3.5rem - 1px);
+  width: calc(50vw) !important;
+  height: calc(100vh - 3.5rem - 1px) !important;
   padding: 2.5rem 0 5rem 0;
   background: rgb(30, 30, 30);
+  
+  display: flex;
+  flex-direction: column;
 }
 
 .problem-solve-view-content__main-editor--contest-mode {
-  width: calc((100vw - 3.5rem - 1px) / 2);
+  height: calc(100vh - 3.5rem - 1px - 7.5rem) !important;
+}
+
+.problem-solve-view-content__main-editor--test-input {
+  height: 3rem;
+  background: white;
+  
+  display: flex;
+  padding-left: 1rem;
+  align-content: center;
+  align-items: center;
+}
+
+.problem-solve-view-content__main-editor--test-mode {
+  height: calc((100vh - 3.5rem - 1px - 7.5rem) / 2) !important;
+}
+
+.problem-solve-view-content__main-editor--test-mode-second {
+  height: calc((100vh - 3.5rem - 1px - 7.5rem) / 2 - 3rem) !important;
 }
 
 .problem-solve-view-content__main-editor-menu {
