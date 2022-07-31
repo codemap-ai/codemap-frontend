@@ -15,8 +15,13 @@ const routes = [
 		component: LectureView,
 	},
 	{
-		path: '/problem/',
+		path: '/problem/:problem_id',
 		name: 'Problem',
+		component: ProblemView,
+	},
+	{
+		path: '/contest/:contest_id',
+		name: 'Contest',
 		component: ProblemView,
 	},
 ]

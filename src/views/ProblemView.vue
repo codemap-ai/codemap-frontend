@@ -146,12 +146,7 @@ export default {
       intervalId: [],
       lockedForRender: false,
       
-      contestMode: true, // TODO: props or router param / computed
-      
-      contestId: -1, // TODO: props or router param
-      problemId: -1, // TODO: props or router param
-      
-      problemSetId: 1, // contestMode이면 contestId에 의해 정해져야 함
+      problemSetId: null, // set value when created
       
       problemIndex: -1,
       problems: [],
@@ -214,7 +209,7 @@ export default {
       this.language = value;
     },
     async loadSubmissions() {
-      this.submissions = await api.submission.getSubmissionsByProblemId(this.currentProblem.problemId);
+      this.submissions = await api.submission.getSubmissionsByProblemId(this.currentProblem.problemId, this.contestId);
     },
     async saveCode() {
       if (this.problemIndex !== -1) {
@@ -254,6 +249,15 @@ export default {
     },
   },
   computed: {
+    contestMode() {
+      return this.$route.path.startsWith("/contest");
+    },
+    contestId() {
+      return this.contestMode ? parseInt(this.$route.params.contest_id) : null;
+    },
+    problemId() {
+      return parseInt(this.$route.params.problem_id);
+    },
     currentProblem() {
       return this.problems[this.problemIndex];
     },
@@ -268,15 +272,17 @@ export default {
       try {
         problemSetId = (await api.contests.getContestById(this.contestId)).problemSetId;
       } catch (e) {
-        this.contestId = await api.contests.startContest(this.problemSetId);
-        problemSetId = (await api.contests.getContestById(this.contestId)).problemSetId;
+        // this.contestId = await api.contests.startContest(this.problemSetId);
+        // problemSetId = (await api.contests.getContestById(this.contestId)).problemSetId;
+        alert("존재하지 않는 대회");
+        this.$router.go(-1);
+        return;
       }
       
       for (let id of (await api.problemset.getProblemSetById(problemSetId)).problem_list) {
         problemIds.push(id);
       }
     } else {
-      this.contestId = -1;
       problemIds = [this.problemId];
     }
     for (let id of problemIds) {
