@@ -23,11 +23,11 @@
           </div>
           <div style="margin-top: 1rem;">
             <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-clock-time-three-outline" style="margin-right: .5rem;"></span>시간 제한</span>
-            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.floor(currentProblem.timeLimit * 100) / 100 }}초</span>
+            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ currentProblem.timeLimit }}초</span>
           </div>
           <div style="margin-top: .5rem;">
             <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-memory" style="margin-right: .5rem;"></span>메모리 제한</span>
-            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.floor(currentProblem.memoryLimit / 1000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}MiB</span>
+            <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ currentProblem.memoryLimit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}MiB</span>
           </div>
         </div>
         <div :class="$style['problem-solve-view-content__main-submission']">
@@ -46,7 +46,8 @@
               </div>
               <div v-else :style="`flex: 3; color: ${result.color}; font-weight: ${result.bold ? 600 : 400};`">{{ result.displayText }}</div>
               <div style="flex: 3;">{{ toDisplayText(usedLanguage) }}</div>
-              <div :class="$style['problem-solve-view-content__main-submission-detail-btn']" @click="result !== judgeResults.WAITING ? submissionIndex = index : 0;" :style="`${result !== judgeResults.WAITING ? '' : 'cursor: not-allowed; background: inherit !important;'}`">
+              <div :class="$style['problem-solve-view-content__main-submission-detail-btn']" @click="result !== judgeResults.WAITING ? submissionIndex = index : 0;"
+                   :style="`${result !== judgeResults.WAITING ? '' : 'cursor: not-allowed; background: inherit !important;'}`">
                 <span class="mdi mdi-archive-outline"></span></div>
             </div>
             <div v-else :class="$style['problem-solve-view-content__main-submission-list-element']" style="color: rgba(0, 0, 0, .6); font-style: italic; font-size: .9rem; margin: .5rem 0;">
@@ -55,13 +56,21 @@
           </div>
         </div>
         
-        <vue3-markdown-it :source="currentProblem.body" style="margin-top: 2rem;"/>
+        <vue3-markdown-it :source="currentProblem.legend" style="margin-top: 2rem;"/>
         
-        <!--        <div :class="$style['problem-solve-view-content__main-statement-header']">입력</div>
-                <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.input"/>
-                
-                <div :class="$style['problem-solve-view-content__main-statement-header']">출력</div>
-                <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.statement.output"/>-->
+        <div :class="$style['problem-solve-view-content__main-statement-header']">입력</div>
+        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.inputFormat"/>
+        
+        <div :class="$style['problem-solve-view-content__main-statement-header']">출력</div>
+        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.outputFormat"/>
+        
+        <div :class="$style['problem-solve-view-content__main-statement-header']" style="margin-bottom: 1rem;">예제</div>
+        <div v-for="(_, index) in currentProblem.inputExamples">
+          <span>예제 입력 {{ index + 1 }}</span>
+          <CopiableTextarea :text="currentProblem.inputExamples[index].trim()"/>
+          <span style="margin-top: .3rem; display: inline-block;">예제 출력 {{ index + 1 }}</span>
+          <CopiableTextarea :text="currentProblem.outputExamples[index].trim()" style="margin-bottom: 2rem;"/>
+        </div>
       </div>
       <div :class="[$style['problem-solve-view-content__main-editor']]">
         <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
@@ -115,17 +124,21 @@
           </div>
           <div v-else>
             <div style="font-weight: 500; font-size: 1.1rem; margin-top: 1rem;">출력</div>
-            <monaco-editor :options="{automaticLayout: true, readOnly: true, scrollBeyondLastLine: false, minimap: {enabled: false}, lineNumbers: 'off', folding: true, lineDecorationsWidth: 0, lineNumbersMinChars: 0}" :value="currentSubmission.output" class="editor" language="plaintext"
-                           style="width: calc(80vw - 5rem); height: 10rem; margin: .5rem 0 2rem 0;"
-                           theme="vs-dark"></monaco-editor>
+            <monaco-editor
+                :options="{automaticLayout: true, readOnly: true, scrollBeyondLastLine: false, minimap: {enabled: false}, lineNumbers: 'off', folding: true, lineDecorationsWidth: 0, lineNumbersMinChars: 0}"
+                :value="currentSubmission.output" class="editor" language="plaintext"
+                style="width: calc(80vw - 5rem); height: 10rem; margin: .5rem 0 2rem 0;"
+                theme="vs-dark"></monaco-editor>
             <div style="font-weight: 500; font-size: 1.1rem;">입력</div>
-            <monaco-editor :options="{automaticLayout: true, readOnly: true, scrollBeyondLastLine: false, minimap: {enabled: false}, lineNumbers: 'off', folding: true, lineDecorationsWidth: 0, lineNumbersMinChars: 0}" :value="currentSubmission.input" class="editor" language="plaintext"
-                           style="width: calc(80vw - 5rem); height: 5rem; margin: .5rem 0 2rem 0;"
-                           theme="vs-dark"></monaco-editor>
+            <monaco-editor
+                :options="{automaticLayout: true, readOnly: true, scrollBeyondLastLine: false, minimap: {enabled: false}, lineNumbers: 'off', folding: true, lineDecorationsWidth: 0, lineNumbersMinChars: 0}"
+                :value="currentSubmission.input" class="editor" language="plaintext"
+                style="width: calc(80vw - 5rem); height: 5rem; margin: .5rem 0 2rem 0;"
+                theme="vs-dark"></monaco-editor>
           </div>
           <div style="font-weight: 500; font-size: 1.2rem; margin-top: 3rem;">코드 ({{ toDisplayText(currentSubmission.usedLanguage) }})</div>
         </div>
-        <div style="color: rgba(0, 0, 0, .8); cursor: pointer; font-size: 2rem;" @click="submissionIndex = -1">
+        <div style="color: rgba(0, 0, 0, .8); cursor: pointer; font-size: 2rem; height: fit-content;" @click="submissionIndex = -1">
           <span class="mdi mdi-close"></span>
         </div>
       </div>
@@ -149,10 +162,12 @@ import Languages from "@/constants/Languages";
 import {getToken} from "@/api/token";
 
 import judgeResults from "@/constants/JudgeResults";
+import CopiableTextarea from "@/components/CopiableTextarea";
 
 export default {
   name: 'ProblemView',
   components: {
+    CopiableTextarea,
     Dropdown,
     Navbar,
     MonacoEditor
@@ -299,8 +314,8 @@ export default {
         return;
       }
       
-      for (let id of (await api.problemset.getProblemSetById(problemSetId)).problem_list) {
-        problemIds.push(id);
+      for (let {problemId} of (await api.problemset.getProblemSetById(problemSetId)).problemList) {
+        problemIds.push(problemId);
       }
     } else {
       problemIds = [this.problemId];
