@@ -19,6 +19,32 @@
 	<script id="MathJax-script" async
 	        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 	</script>
+	<script>
+		(function (XHR) {
+			"use strict";
+
+			var open = XHR.prototype.open;
+			var send = XHR.prototype.send;
+
+			XHR.prototype.open = function (method, url, async, user, pass) {
+				this._url = url;
+				open.call(this, method, url, async, user, pass);
+			};
+
+			XHR.prototype.send = function (data) {
+				var self = this;
+
+				if ((new URL(self._url)).pathname.startsWith("/ws/")) {
+					let token = localStorage.getItem("token");
+					if (token !== null) {
+						self.setRequestHeader("Authorization", `Bearer ${token}`);
+					}
+				}
+
+				send.call(this, data);
+			}
+		})(XMLHttpRequest);
+	</script>
 </head>
 <body>
 <noscript>

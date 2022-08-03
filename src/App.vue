@@ -1,14 +1,33 @@
 <template>
-  <router-view/>
+  <router-view v-if="renderRouter" />
 </template>
 
 <script>
 import 'highlight.js/styles/darcula.css';
+import {setToken} from "@/api/token";
+import api from "@/api";
 
 export default {
   name: 'App',
   data() {
-    return {};
+    return {
+      renderRouter: false,
+    };
+  },
+  async created() {
+    let token = localStorage.getItem("token");
+    if (token !== null) {
+      setToken(token);
+      
+      let ret = await api.users.me();
+      if (typeof ret?.username !== "string") {
+        setToken(null);
+        localStorage.removeItem("token");
+        console.log("clear token");
+      }
+    }
+    
+    this.renderRouter = true;
   },
   methods: {},
 }

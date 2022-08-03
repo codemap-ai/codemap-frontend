@@ -21,8 +21,9 @@ export default {
   data() {
     return {
       dropdownOptions: [
-        ["문제", "문제", () => this.$router.push("/problem/")],
-        ["강의", "강의", () => this.$router.push("/lecture/")]
+        ["강의", "강의", () => this.$router.push("/lecture/")],
+        ["문제", "문제", () => this.$router.push("/problem/1")],
+        ["대회", "대회", () => this.$router.push("/contest/1")],
       ],
     };
   },

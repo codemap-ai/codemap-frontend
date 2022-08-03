@@ -1,5 +1,5 @@
 <template>
-  <Navbar v-if="problemIndex > -1" :title="`${ contestMode ? `${problemIndex + 1}. ` : '' }${currentProblem.title}`" dropdown="문제" title_desc="현재 문제"/>
+  <Navbar v-if="problemIndex > -1" :title="`${ contestMode ? `${problemIndex + 1}. ` : '' }${currentProblem.title}`" :dropdown="contestMode ? `대회` : `문제`" title_desc="현재 문제"/>
   <div v-if="problemIndex === -1"></div>
   <div v-else :class="$style['problem-solve-view-content']">
     <div v-if="contestMode" :class="$style['problem-solve-view-content__sidebar']">
@@ -46,7 +46,8 @@
               </div>
               <div v-else :style="`flex: 3; color: ${result.color}; font-weight: ${result.bold ? 600 : 400};`">{{ result.displayText }}</div>
               <div style="flex: 3;">{{ toDisplayText(usedLanguage) }}</div>
-              <div :class="$style['problem-solve-view-content__main-submission-detail-btn']" @click="submissionIndex = index;"><span class="mdi mdi-archive-outline"></span></div>
+              <div :class="$style['problem-solve-view-content__main-submission-detail-btn']" @click="result !== judgeResults.WAITING ? submissionIndex = index : 0;" :style="`${result !== judgeResults.WAITING ? '' : 'cursor: not-allowed; background: inherit !important;'}`">
+                <span class="mdi mdi-archive-outline"></span></div>
             </div>
             <div v-else :class="$style['problem-solve-view-content__main-submission-list-element']" style="color: rgba(0, 0, 0, .6); font-style: italic; font-size: .9rem; margin: .5rem 0;">
               제출 기록 없음
@@ -96,12 +97,8 @@
     <div style="width: 80vw; height: 70vh; background: white; padding: 1.5rem; overflow-y: auto; box-shadow: 0 0 35px -20px #000000;" @click.stop="">
       <div style="display: flex; justify-content: space-between;">
         <div style="flex: 1;">
-          <div style="font-weight: 500; font-size: 1.8rem; margin-top: .3rem;">제출 결과</div>
+          <div style="font-weight: 500; font-size: 1.8rem; margin-top: .3rem;">{{ currentSubmission.testMode ? '테스트' : '제출' }} 결과</div>
           <div style="margin-top: .5rem;">제출 시간 : {{ currentSubmission.submitDate.toLocaleString() }}</div>
-          <div style="margin-top: 2rem; color: rgba(0, 0, 0, .7);">
-            <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-trending-up" style="margin-right: .5rem;"></span>획득 점수</span>
-            <span><span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ currentSubmission.score }}</span> / 100점</span>
-          </div>
           <div style="margin-top: 1rem; color: rgba(0, 0, 0, .7)">
             <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-clock-time-three-outline" style="margin-right: .5rem;"></span>실행 시간</span>
             <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.floor(currentSubmission.executeTime * 1000) / 1000 }}초</span>
@@ -110,6 +107,22 @@
             <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-memory" style="margin-right: .5rem;"></span>사용 메모리</span>
             <span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ Math.floor(currentSubmission.usedMemory / 1024 * 1000) / 1000 }}MiB</span>
           </div>
+          <div v-if="!currentSubmission.testMode">
+            <div style="margin-top: 2rem; color: rgba(0, 0, 0, .7);">
+              <span :class="$style['problem-solve-view-content__main-problem-info-key']"><span class="mdi mdi-trending-up" style="margin-right: .5rem;"></span>획득 점수</span>
+              <span><span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ currentSubmission.score }}</span> / 100점</span>
+            </div>
+          </div>
+          <div v-else>
+            <div style="font-weight: 500; font-size: 1.1rem; margin-top: 1rem;">출력</div>
+            <monaco-editor :options="{automaticLayout: true, readOnly: true, scrollBeyondLastLine: false, minimap: {enabled: false}, lineNumbers: 'off', folding: true, lineDecorationsWidth: 0, lineNumbersMinChars: 0}" :value="currentSubmission.output" class="editor" language="plaintext"
+                           style="width: calc(80vw - 5rem); height: 10rem; margin: .5rem 0 2rem 0;"
+                           theme="vs-dark"></monaco-editor>
+            <div style="font-weight: 500; font-size: 1.1rem;">입력</div>
+            <monaco-editor :options="{automaticLayout: true, readOnly: true, scrollBeyondLastLine: false, minimap: {enabled: false}, lineNumbers: 'off', folding: true, lineDecorationsWidth: 0, lineNumbersMinChars: 0}" :value="currentSubmission.input" class="editor" language="plaintext"
+                           style="width: calc(80vw - 5rem); height: 5rem; margin: .5rem 0 2rem 0;"
+                           theme="vs-dark"></monaco-editor>
+          </div>
           <div style="font-weight: 500; font-size: 1.2rem; margin-top: 3rem;">코드 ({{ toDisplayText(currentSubmission.usedLanguage) }})</div>
         </div>
         <div style="color: rgba(0, 0, 0, .8); cursor: pointer; font-size: 2rem;" @click="submissionIndex = -1">
@@ -117,7 +130,7 @@
         </div>
       </div>
       <monaco-editor :options="{automaticLayout: true, readOnly: true, scrollBeyondLastLine: false, minimap: {enabled: false},}" :value="currentSubmission.submitCode" class="editor" language="cpp"
-                     style="width: calc(80vw - 4.2rem); margin: 1rem 0 2rem 0;"
+                     style="width: calc(80vw - 5rem); margin: 1rem 0 2rem 0;"
                      theme="vs-dark"></monaco-editor>
     </div>
   </div>
@@ -133,6 +146,9 @@ import Dropdown from "@/components/Dropdown";
 
 import api from "@/api";
 import Languages from "@/constants/Languages";
+import {getToken} from "@/api/token";
+
+import judgeResults from "@/constants/JudgeResults";
 
 export default {
   name: 'ProblemView',
@@ -143,6 +159,8 @@ export default {
   },
   data() {
     return {
+      judgeResults,
+      
       intervalId: [],
       lockedForRender: false,
       
@@ -193,6 +211,8 @@ export default {
       }
       this.submitDisabled = true;
       
+      this.saveCode();
+      
       let submissionId = (await api.submit(this.currentProblem.problemId, this.contestId, this.language, this.code, this.testMode, this.testInput)).submissionId;
       let {id} = this.socket.subscribe("/topic/chat/room/" + submissionId, message => {
         this.socket.unsubscribe(id);
@@ -213,7 +233,7 @@ export default {
     },
     async saveCode() {
       if (this.problemIndex !== -1) {
-        await api.code.save(this.currentProblem.problemId, this.contestId, this.code);
+        await api.code.save(this.currentProblem.problemId, this.contestId, this.code, this.language);
       }
     },
     async moveProblem(index) {
@@ -231,7 +251,9 @@ export default {
       
       this.code = "";
       try {
-        this.code = await api.code.load(this.currentProblem.problemId, this.contestId) ?? this.defaultCode;
+        let temp = await api.code.load(this.currentProblem.problemId, this.contestId, this.language);
+        if (temp.trim() === "") temp = this.defaultCode;
+        this.code = temp;
       } catch (e) {
         this.code = this.defaultCode;
       }
@@ -253,10 +275,10 @@ export default {
       return this.$route.path.startsWith("/contest");
     },
     contestId() {
-      return this.contestMode ? parseInt(this.$route.params.contest_id) : null;
+      return this.contestMode ? parseInt(this.$route.params.contest_id) : -1;
     },
     problemId() {
-      return parseInt(this.$route.params.problem_id);
+      return parseInt(this.$route.params.problem_id) ?? -1;
     },
     currentProblem() {
       return this.problems[this.problemIndex];
@@ -272,8 +294,6 @@ export default {
       try {
         problemSetId = (await api.contests.getContestById(this.contestId)).problemSetId;
       } catch (e) {
-        // this.contestId = await api.contests.startContest(this.problemSetId);
-        // problemSetId = (await api.contests.getContestById(this.contestId)).problemSetId;
         alert("존재하지 않는 대회");
         this.$router.go(-1);
         return;
@@ -292,16 +312,17 @@ export default {
     this.intervalId.push(setInterval(this.renderMathJax, 100));
     this.intervalId.push(setInterval(this.saveCode, 1000 * 10));
     
-    this.socket = Stomp.over(new SockJS("http://43.200.180.31:8081/ws/chat"));
+    this.socket = Stomp.over(() => new SockJS("http://43.200.180.31:8081/ws/chat"));
     let originalDebug = this.socket.debug;
     this.socket.debug = (...message) => {
       if (process.env.NODE_ENV === "development") {
         originalDebug(...message);
       }
     }; // 디버그 비활성화
-    this.socket.connect({}, () => {
-      this.sockedConnected = true;
+    this.socket.connect({
+      "Authorization": `Bearer ${getToken()}`,
     }, () => {
+      this.sockedConnected = true;
     });
     
     this.languages = Array.from(Object.keys(Languages.values)).map(key => [Languages.values[key], key]);
