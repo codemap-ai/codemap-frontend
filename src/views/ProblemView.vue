@@ -184,12 +184,14 @@ export default {
       problemIndex: -1,
       problems: [],
       
-      defaultCode: "#include <bits/stdc++.h>\n\nusing namespace std;\n\nint main() {\n\tcout << \"Hello, World\";\n}\n", // TODO: 언어별 default code, 별도 분리
       code: "",
-      languages: [],
-      language: "",
+      
       testMode: false,
       testInput: "",
+  
+      defaultCodes: [],
+      languages: [],
+      language: "",
       
       submitDisabled: true,
       subscribeIds: new Set(),
@@ -240,8 +242,16 @@ export default {
       
       this.submitDisabled = false;
     },
-    changeLanguage(value) {
-      this.language = value;
+    async changeLanguage(value) {
+      this.saveCode();
+      try {
+        this.language = value;
+        let temp = await api.code.load(this.currentProblem.problemId, this.contestId, this.language);
+        if (temp.trim() === "") temp = this.defaultCodes[this.language];
+        this.code = temp;
+      } catch (e) {
+        this.code = this.defaultCodes[this.language];
+      }
     },
     async loadSubmissions() {
       this.submissions = await api.submission.getSubmissionsByProblemId(this.currentProblem.problemId, this.contestId);
@@ -267,10 +277,10 @@ export default {
       this.code = "";
       try {
         let temp = await api.code.load(this.currentProblem.problemId, this.contestId, this.language);
-        if (temp.trim() === "") temp = this.defaultCode;
+        if (temp.trim() === "") temp = this.defaultCodes[this.language];
         this.code = temp;
       } catch (e) {
-        this.code = this.defaultCode;
+        this.code = this.defaultCodes[this.language];
       }
       
       if (this.socket !== null) {
@@ -340,12 +350,16 @@ export default {
       this.sockedConnected = true;
     });
     
-    this.languages = Array.from(Object.keys(Languages.values)).map(key => [Languages.values[key], key]);
-    this.language = this.languages[0][1];
+    this.languages = Array.from(Object.keys(Languages.values)).map(key => [Languages.values[key].display, key]); // [display text, language id]
+    for (let key of Object.keys(Languages.values)) {
+      this.defaultCodes[key] = Languages.values[key].defaultCode;
+    }
+    this.language = this.languages[0][1]; // c++17로 설정
     
     await this.moveProblem(0);
   },
   beforeUnmount() {
+    this.saveCode();
     this.socket.disconnect();
   },
 }
