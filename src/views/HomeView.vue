@@ -6,6 +6,7 @@
   <button @click='$router.push("/problem/1");'>problem 1</button>
   <button @click='$router.push("/contest/1");'>contest 1</button>
   <StartContest/>
+  <button @click='$router.push("/curriculum");'>curriculum</button>
 </template>
 
 <script>

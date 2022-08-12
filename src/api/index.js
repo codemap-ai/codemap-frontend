@@ -5,5 +5,6 @@ import problemset from "@/api/problemset";
 import contests from "@/api/contests";
 import code from "@/api/code";
 import users from "@/api/users";
+import algorithms from "@/api/algorithms";
 
-export default {submission, submit, problem, problemset, contests, code, users};
+export default {submission, submit, problem, problemset, contests, code, users, algorithms};

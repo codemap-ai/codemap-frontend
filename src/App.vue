@@ -24,6 +24,8 @@ export default {
         setToken(null);
         localStorage.removeItem("token");
         console.log("clear token");
+      } else {
+        console.log(`logined as ${ret.username}`);
       }
     }
     

@@ -3,8 +3,13 @@
     <div :class="$style['navbar__logo']" @click="$router.push('/')">
       <div :class="$style['navbar__logo-text']">C</div>
     </div>
-    <Dropdown :default_value="dropdown" :direction="false" :options="dropdownOptions" height="3.5rem"/>
-    <div :class="$style['navbar__detail']">
+<!--    <Dropdown :default_value="dropdown" :direction="false" :options="dropdownOptions" height="3.5rem"/>-->
+    <div style="display: flex; align-items: center; justify-content: center; padding: .5rem; border-right: 1px solid rgba(0, 0, 0, .1);">
+      <div v-for="([display, value, callback]) of dropdownOptions" @click="callback" style="padding: 0 .5rem; margin: 0 1rem; cursor: pointer;">
+        {{ display }}
+      </div>
+    </div>
+    <div :class="$style['navbar__detail']" v-if="title_desc?.trim() !== undefined || title?.trim() !== undefined">
       <span :class="$style['navbar__current-lecture']">{{ title_desc }}</span>
       <span>{{ title }}</span>
     </div>
