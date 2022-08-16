@@ -3,6 +3,7 @@ import LectureView from "@/views/LectureView";
 import HomeView from "@/views/HomeView";
 import ProblemView from "@/views/ProblemView";
 import LectureCategoryListView from "@/views/LectureCategoryListView";
+import LectureCategoryDetailView from "@/views/LectureCategoryDetailView";
 
 const routes = [
 	{
@@ -11,7 +12,7 @@ const routes = [
 		component: HomeView,
 	},
 	{
-		path: '/lecture/',
+		path: '/lecture/:algorithm_id',
 		name: 'Lecture',
 		component: LectureView,
 	},
@@ -27,8 +28,13 @@ const routes = [
 	},
 	{
 		path: '/curriculum/',
-		name: 'Curriculum',
+		name: 'CurriculumList',
 		component: LectureCategoryListView,
+	},
+	{
+		path: '/curriculum/:category_id',
+		name: 'CurriculumDetail',
+		component: LectureCategoryDetailView,
 	},
 ]
 

@@ -1,5 +1,6 @@
 <template>
-  <button @click='$router.push("/lecture/");'>lecture</button>
+  <Navbar/>
+  <button @click='$router.push("/lecture/1");'>lecture</button>
   <button @click='register'>register</button>
   <button @click='login'>login</button>
   <button @click='logout'>logout</button>
@@ -13,10 +14,11 @@
 import StartContest from "@/components/StartContest";
 import api from "@/api";
 import {setToken} from "@/api/token";
+import Navbar from "@/components/Navbar";
 
 export default {
   name: "HomeView",
-  components: {StartContest},
+  components: {Navbar, StartContest},
   created() {
   
   },

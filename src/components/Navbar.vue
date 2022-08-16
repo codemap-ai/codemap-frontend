@@ -26,7 +26,7 @@ export default {
   data() {
     return {
       dropdownOptions: [
-        ["강의", "강의", () => this.$router.push("/lecture/")],
+        ["커리큘럼", "커리큘럼", () => this.$router.push("/curriculum/")],
         ["문제", "문제", () => this.$router.push("/problem/1")],
         ["대회", "대회", () => this.$router.push("/contest/1")],
       ],

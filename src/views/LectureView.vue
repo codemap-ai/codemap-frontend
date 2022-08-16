@@ -1,6 +1,6 @@
 <template>
-  <Navbar dropdown="강의" title="정렬" title_desc="현재 강의"/>
-  <div :class="$style['lecture-view-content']">
+  <Navbar dropdown="강의" :title="title" title_desc="현재 강의"/>
+  <div v-if="!isLoading" :class="$style['lecture-view-content']">
     <div :class="$style['lecture-view-content__sidebar']">
       <div :class="$style['lecture-view-content__sidebar-expand-btn']">
         <span class="mdi mdi-view-headline"></span></div>
@@ -35,6 +35,8 @@
 
 <script>
 import Navbar from "@/components/Navbar";
+import axios from "axios";
+import api from "@/api";
 
 export default {
   name: 'LectureView',
@@ -42,6 +44,9 @@ export default {
   data() {
     return {
       intervalId: [],
+      isLoading: true,
+      
+      title: "",
       chapterIndex: 0,
       pageIndex: 0,
       lockedForRender: false,
@@ -96,9 +101,17 @@ export default {
       }
       return true;
     },
+    algorithm_id() {
+      return this.$route.params.algorithm_id;
+    },
   },
-  created() {
-    this.chapters = JSON.parse('[{"title":"버블 정렬","pages":[["## 버블 정렬\\n\\n거품 정렬 또는 버블 정렬( - 整列, 영어: bubble sort, sinking sort)은 두 인접한 원소를 검사하여 정렬하는 방법이다. 시간 복잡도가 $O(n^{2})$로 상당히 느리지만, 코드가 단순하기 때문에 자주 사용된다. 원소의 이동이 거품이 수면으로 올라오는 듯한 모습을 보이기 때문에 지어진 이름이다\\n\\n오름차순으로 정렬하는 버블 정렬의 과정은 다음과 같다.","```\\n55 07 78 12 42  초기값[파란색은 sorting]\\n07 55 78 12 42  첫 번째 패스(pass)\\n07 55 78 12 42\\n07 55 12 78 42\\n07 55 12 42 78  두 번째 패스(pass)\\n07 55 12 42 78\\n07 12 55 42 78\\n07 12 42 55 78  세 번째 패스(pass)\\n07 12 42 55 78  네 번째 패스(pass)\\n07 12 42 55 78  다섯 번째 패스(pass)\\n07 12 42 55 78  정렬 끝\\n```"],["#### C++ 코드\\n\\n```cpp\\n#include <iostream>\\nusing namespace std;\\n#include <iomanip>\\nusing std::setw;\\n\\nvoid printBubbles(const int bubbles[], const int n);\\nvoid lineup(int& large, int& small);\\nint main()\\n{\\n\\tconst int n = 10;\\n\\tint bubbles[n] = { 2, 6, 4, 8, 10, 12, 89, 68, 45, 37 };\\n\\n\\tcout << \\"Data items in original order\\\\n\\";\\n\\tprintBubbles(bubbles, n);\\n\\tfor (int level = 0; level < n - 1; level++) {\\n\\t\\tfor (int i = 0; i < n - level - 1; i++) {\\n\\t\\t\\tif (bubbles[i] > bubbles[i + 1])\\n\\t\\t\\t\\tlineup(bubbles[i], bubbles[i + 1]);\\n\\t\\t}\\n\\t}\\n\\tcout << \\"\\\\nData items in ascending order\\\\n\\";\\n\\tprintBubbles(bubbles, n);\\n\\treturn 0;\\n}\\n\\nvoid printBubbles(const int bubbles[], const int n) {\\n\\tfor (int i = 0; i < n; i++)\\n\\t\\tcout << setw(4) << bubbles[i];\\n\\tcout << endl;\\n}\\nvoid lineup(int& large, int& small) {\\n\\tint save = large;\\n\\tlarge = small;\\n\\tsmall = save;\\n}\\n```","#### 파이썬 코드\\n\\n```python\\ndef bubbleSort(x):\\n\\tlength = len(x)-1\\n\\tfor i in range(length):\\n\\t\\tfor j in range(length-i):\\n\\t\\t\\tif x[j] > x[j+1]:\\n\\t\\t\\t\\tx[j], x[j+1] = x[j+1], x[j]\\n\\treturn x\\n```"],["test3","asdfdasf"]]},{"title":"병합 정렬","pages":[["## 병합 정렬\\n구간 $[1, N]$을 정렬하기 위해서, 구간 $[1, \\\\lfloor \\\\frac{N}{2} \\\\rfloor]$, $[\\\\lfloor \\\\frac{N}{2} \\\\rfloor + 1, N]$을 각각 정렬한 뒤, 이미 정렬된 두 하위 구간을 합쳐서 정렬된 배열을 만든다."]]}]');
+  async created() {
+    let ret = await api.algorithms.getAlgorithm(this.algorithm_id);
+    this.chapters = ret.body;
+    this.title = ret.title;
+    // this.chapters = JSON.parse('');
+    this.isLoading = false;
+    
     this.intervalId.push(setInterval(this.renderMathJax, 100));
   },
 }
