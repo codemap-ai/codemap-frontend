@@ -27,8 +27,7 @@ export default {
     return {
       dropdownOptions: [
         ["커리큘럼", "커리큘럼", () => this.$router.push("/curriculum/")],
-        ["문제", "문제", () => this.$router.push("/problem/1")],
-        ["대회", "대회", () => this.$router.push("/contest/1")],
+        ["문제집", "문제집", () => this.$router.push("/problem_set")],
       ],
     };
   },

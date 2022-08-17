@@ -4,6 +4,8 @@ import HomeView from "@/views/HomeView";
 import ProblemView from "@/views/ProblemView";
 import LectureCategoryListView from "@/views/LectureCategoryListView";
 import LectureCategoryDetailView from "@/views/LectureCategoryDetailView";
+import ProblemSetDetailView from "@/views/ProblemSetDetailView";
+import ProblemSetListView from "@/views/ProblemSetListView";
 
 const routes = [
 	{
@@ -35,6 +37,16 @@ const routes = [
 		path: '/curriculum/:category_id',
 		name: 'CurriculumDetail',
 		component: LectureCategoryDetailView,
+	},
+	{
+		path: '/problem_set/',
+		name: 'ProblemSetListView',
+		component: ProblemSetListView,
+	},
+	{
+		path: '/problem_set/:problem_set_id',
+		name: 'ProblemSetDetailView',
+		component: ProblemSetDetailView,
 	},
 ]
 
