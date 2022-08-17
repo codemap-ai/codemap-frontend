@@ -3,7 +3,7 @@
     <div :class="$style['navbar__logo']" @click="$router.push('/')">
       <div :class="$style['navbar__logo-text']">C</div>
     </div>
-<!--    <Dropdown :default_value="dropdown" :direction="false" :options="dropdownOptions" height="3.5rem"/>-->
+    <!--    <Dropdown :default_value="dropdown" :direction="false" :options="dropdownOptions" height="3.5rem"/>-->
     <div style="display: flex; align-items: center; justify-content: center; padding: .5rem; border-right: 1px solid rgba(0, 0, 0, .1);">
       <div v-for="([display, value, callback]) of dropdownOptions" @click="callback" style="padding: 0 .5rem; margin: 0 1rem; cursor: pointer;">
         {{ display }}
@@ -16,9 +16,9 @@
       </div>
       <div style="display: flex; align-items: center;" v-if="contestMode === true">
         <div style="margin-right: 1rem;">
-          모의고사 종료까지 00:15:32
+          모의고사 종료까지 {{ remainTimeString }}
         </div>
-        <div style="padding: .5rem 1rem; border-radius: .5rem; color: #000000; background: #dae3fc;">모의고사 종료</div>
+        <div style="padding: .5rem 1rem; border-radius: .5rem; color: #000000; background: #dae3fc; cursor: pointer" @click="finishContest">모의고사 종료</div>
       </div>
     </div>
   </div>
@@ -30,7 +30,7 @@ import Dropdown from "@/components/Dropdown";
 export default {
   name: "Navbar",
   components: {Dropdown},
-  props: ['dropdown', 'title_desc', 'title', "contestMode"],
+  props: ['dropdown', 'title_desc', 'title', "contestMode", "remainTime", "finishContest"],
   data() {
     return {
       dropdownOptions: [
@@ -39,6 +39,25 @@ export default {
         ["문제", "문제", () => this.$router.push("/problem/")],
       ],
     };
+  },
+  methods: {
+    convert(num) {
+      num = Math.floor(num);
+      if (num < 10) return `0${num}`;
+      else return `${num}`;
+    }
+  },
+  computed: {
+    remainTimeString() {
+      let temp = this.remainTime;
+      let ret = "";
+      ret += this.convert(temp / 3600) + ":";
+      temp %= 3600;
+      ret += this.convert(temp / 60) + ":";
+      temp %= 60;
+      ret += this.convert(temp);
+      return ret;
+    },
   },
 }
 </script>

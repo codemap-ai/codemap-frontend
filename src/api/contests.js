@@ -12,6 +12,14 @@ const startContest = async (problemSetId) =>
 		headers: {
 			"Content-Type": "application/json",
 		},
-	})
+	});
 
-export default {getContestById, startContest};
+const finishContest = async (contestId) => await axios.post(`/contests/finish/`, JSON.stringify({
+	contestId,
+}), {
+	headers: {
+		"Content-Type": "application/json",
+	},
+});
+
+export default {getContestById, startContest, finishContest};

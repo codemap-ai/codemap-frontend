@@ -1,5 +1,6 @@
 <template>
-  <Navbar v-if="problemIndex > -1" :contest-mode="contestMode" :title="`${ contestMode ? `[${contestTitle}] ${problemIndex + 1}. ` : '' }${currentProblem.title}`" :dropdown="contestMode ? `대회` : `문제`" title_desc="현재 문제"/>
+  <Navbar v-if="problemIndex > -1" :finish-contest="finishContest" :remain-time="contestNavbarRemain" :contest-mode="contestMode"
+          :title="`${ contestMode ? `[${contestTitle}] ${problemIndex + 1}. ` : '' }${currentProblem.title}`" :dropdown="contestMode ? `대회` : `문제`" title_desc="현재 문제"/>
   <div v-if="problemIndex === -1"></div>
   <div v-else :class="$style['problem-solve-view-content']">
     <div v-if="contestMode" :class="$style['problem-solve-view-content__sidebar']">
@@ -185,11 +186,15 @@ export default {
       problemIndex: -1,
       problems: [],
       
+      contestStart: 0,
+      contestDuration: 0,
+      contestNavbarRemain: 0,
+      
       code: "",
       
       testMode: false,
       testInput: "",
-  
+      
       defaultCodes: [],
       languages: [],
       language: "",
@@ -295,6 +300,11 @@ export default {
       await this.loadSubmissions();
       this.submitDisabled = false;
     },
+    async finishContest() {
+      await api.contests.finishContest(this.contestId);
+      alert("대회를 종료했습니다.");
+      this.$router.push("/");
+    },
   },
   computed: {
     contestMode() {
@@ -324,7 +334,14 @@ export default {
     if (this.contestMode) {
       let problemSetId;
       try {
-        problemSetId = (await api.contests.getContestById(this.contestId)).problemSetId;
+        let contestInfo = await api.contests.getContestById(this.contestId);
+        if (contestInfo.finishTime !== null) {
+          alert("종료된 대회");
+          this.$router.go(-1);
+          return;
+        }
+        this.contestStart = Math.floor((new Date(contestInfo.createTime)).getTime() / 1000);
+        problemSetId = contestInfo.problemSetId;
       } catch (e) {
         alert("존재하지 않는 대회");
         this.$router.go(-1);
@@ -333,6 +350,7 @@ export default {
       
       let problemSetInfo = await api.problemset.getProblemSetById(problemSetId);
       this.contestTitle = problemSetInfo.title;
+      this.contestDuration = problemSetInfo.duration * 60;
       for (let {problemId} of problemSetInfo.problemList) {
         problemIds.push(problemId);
       }
@@ -345,6 +363,15 @@ export default {
     
     this.intervalId.push(setInterval(this.renderMathJax, 100));
     this.intervalId.push(setInterval(this.saveCode, 1000 * 10));
+    if (this.contestMode) {
+      this.intervalId.push(setInterval(() => {
+        this.contestNavbarRemain = this.contestStart + this.contestDuration - Math.floor(Date.now() / 1000);
+        if (this.contestNavbarRemain < 0) {
+          alert("대회가 종료되었습니다.");
+          this.$router.push("/");
+        }
+      }, 1000));
+    }
     
     this.socket = Stomp.over(() => new SockJS("http://43.200.180.31:8081/ws/chat"));
     let originalDebug = this.socket.debug;
@@ -370,6 +397,10 @@ export default {
   beforeUnmount() {
     this.saveCode();
     this.socket?.disconnect();
+    
+    for (let id of this.intervalId) {
+      clearInterval(id);
+    }
   },
 }
 </script>
