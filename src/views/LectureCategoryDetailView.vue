@@ -2,7 +2,7 @@
   <Navbar dropdown="강의"/>
   <div v-if="!isLoading" style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top: 2rem;">
     <div v-for="{algorithmId, title, description} of categoryList"
-         style="position: relative; margin: 1rem 0; padding: 1.5rem; width: 80vw; min-height: 9rem; box-shadow: 0px 4px 20px 1px rgba(0, 0, 0, 0.25); border-radius: 1rem;">
+         style="position: relative; margin: 1rem 0; padding: 1.5rem; width: 80vw; min-height: 9rem; box-shadow: 0px 0px 20px 1px rgba(0,0,0,0.15); border-radius: 1rem;">
       <div style="font-size: 1.2rem; font-weight: 500; width: 100%; padding-bottom: .5rem; border-bottom: 1px solid rgba(0, 0, 0, .2);">
         {{ title }}
       </div>
