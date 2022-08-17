@@ -159,7 +159,7 @@ import Dropdown from "@/components/Dropdown";
 
 import api from "@/api";
 import Languages from "@/constants/Languages";
-import {getToken} from "@/api/token";
+import {getToken, isLogin} from "@/api/token";
 
 import judgeResults from "@/constants/JudgeResults";
 import CopiableTextarea from "@/components/CopiableTextarea";
@@ -314,6 +314,12 @@ export default {
     },
   },
   async created() {
+    if (!isLogin()) {
+      alert("로그인 후 이용하세요");
+      this.$router.go(-1);
+      return;
+    }
+    
     let problemIds = [];
     if (this.contestMode) {
       let problemSetId;
@@ -363,7 +369,7 @@ export default {
   },
   beforeUnmount() {
     this.saveCode();
-    this.socket.disconnect();
+    this.socket?.disconnect();
   },
 }
 </script>
