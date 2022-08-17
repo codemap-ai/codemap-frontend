@@ -1,5 +1,5 @@
 <template>
-  <Navbar v-if="problemIndex > -1" :title="`${ contestMode ? `${problemIndex + 1}. ` : '' }${currentProblem.title}`" :dropdown="contestMode ? `대회` : `문제`" title_desc="현재 문제"/>
+  <Navbar v-if="problemIndex > -1" :contest-mode="contestMode" :title="`${ contestMode ? `[${contestTitle}] ${problemIndex + 1}. ` : '' }${currentProblem.title}`" :dropdown="contestMode ? `대회` : `문제`" title_desc="현재 문제"/>
   <div v-if="problemIndex === -1"></div>
   <div v-else :class="$style['problem-solve-view-content']">
     <div v-if="contestMode" :class="$style['problem-solve-view-content__sidebar']">
@@ -165,7 +165,7 @@ import judgeResults from "@/constants/JudgeResults";
 import CopiableTextarea from "@/components/CopiableTextarea";
 
 export default {
-  name: 'ProblemView',
+  name: 'ProblemSolveView',
   components: {
     CopiableTextarea,
     Dropdown,
@@ -181,6 +181,7 @@ export default {
       
       problemSetId: null, // set value when created
       
+      contestTitle: "",
       problemIndex: -1,
       problems: [],
       
@@ -324,7 +325,9 @@ export default {
         return;
       }
       
-      for (let {problemId} of (await api.problemset.getProblemSetById(problemSetId)).problemList) {
+      let problemSetInfo = await api.problemset.getProblemSetById(problemSetId);
+      this.contestTitle = problemSetInfo.title;
+      for (let {problemId} of problemSetInfo.problemList) {
         problemIds.push(problemId);
       }
     } else {

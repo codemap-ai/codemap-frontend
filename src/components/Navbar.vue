@@ -9,9 +9,17 @@
         {{ display }}
       </div>
     </div>
-    <div :class="$style['navbar__detail']" v-if="title_desc?.trim() !== undefined || title?.trim() !== undefined">
-      <span :class="$style['navbar__current-lecture']">{{ title_desc }}</span>
-      <span>{{ title }}</span>
+    <div :class="$style['navbar__detail']" v-if="title_desc?.trim() !== undefined || title?.trim() !== undefined" style="display: flex; justify-content: space-between; flex: 1;">
+      <div>
+        <span :class="$style['navbar__current-lecture']">{{ title_desc }}</span>
+        <span>{{ title }}</span>
+      </div>
+      <div style="display: flex; align-items: center;" v-if="contestMode === true">
+        <div style="margin-right: 1rem;">
+          모의고사 종료까지 00:15:32
+        </div>
+        <div style="padding: .5rem 1rem; border-radius: .5rem; color: #000000; background: #dae3fc;">모의고사 종료</div>
+      </div>
     </div>
   </div>
 </template>
@@ -22,12 +30,13 @@ import Dropdown from "@/components/Dropdown";
 export default {
   name: "Navbar",
   components: {Dropdown},
-  props: ['dropdown', 'title_desc', 'title'],
+  props: ['dropdown', 'title_desc', 'title', "contestMode"],
   data() {
     return {
       dropdownOptions: [
         ["커리큘럼", "커리큘럼", () => this.$router.push("/curriculum/")],
         ["문제집", "문제집", () => this.$router.push("/problem_set")],
+        ["문제", "문제", () => this.$router.push("/problem/")],
       ],
     };
   },

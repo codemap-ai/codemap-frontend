@@ -1,11 +1,12 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import LectureView from "@/views/LectureView";
 import HomeView from "@/views/HomeView";
-import ProblemView from "@/views/ProblemView";
+import ProblemSolveView from "@/views/ProblemSolveView";
 import LectureCategoryListView from "@/views/LectureCategoryListView";
 import LectureCategoryDetailView from "@/views/LectureCategoryDetailView";
 import ProblemSetDetailView from "@/views/ProblemSetDetailView";
 import ProblemSetListView from "@/views/ProblemSetListView";
+import ProblemListView from "@/views/ProblemListView";
 
 const routes = [
 	{
@@ -19,14 +20,19 @@ const routes = [
 		component: LectureView,
 	},
 	{
-		path: '/problem/:problem_id',
+		path: '/problem/',
 		name: 'Problem',
-		component: ProblemView,
+		component: ProblemListView,
+	},
+	{
+		path: '/problem/:problem_id',
+		name: 'ProblemSolve',
+		component: ProblemSolveView,
 	},
 	{
 		path: '/contest/:contest_id',
 		name: 'Contest',
-		component: ProblemView,
+		component: ProblemSolveView,
 	},
 	{
 		path: '/curriculum/',
