@@ -373,7 +373,7 @@ export default {
       }, 1000));
     }
     
-    this.socket = Stomp.over(() => new SockJS("http://43.200.180.31:8081/ws/chat"));
+    this.socket = Stomp.over(() => new SockJS("https://api.codemap.ai/ws/chat"));
     let originalDebug = this.socket.debug;
     this.socket.debug = (...message) => {
       if (process.env.NODE_ENV === "development") {
