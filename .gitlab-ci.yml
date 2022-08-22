@@ -6,16 +6,12 @@ cache:
 
 stages:
     - build
-    - deploy
 
 build:
-    script:
+  stage: build
+  script:
         - npm i
         - npm run build
-    stage: build
-
-pages:
-  stage: deploy
   artifacts:
     paths:
       - dist
