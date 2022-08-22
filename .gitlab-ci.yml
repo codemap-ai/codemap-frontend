@@ -8,7 +8,10 @@ stages:
     - build
 
 build:
-    script:
+  stage: build
+  script:
         - npm i
         - npm run build
-    stage: build
+  artifacts:
+    paths:
+      - dist
