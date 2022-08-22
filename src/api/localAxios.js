@@ -2,7 +2,7 @@ import axios from "axios";
 import {getToken} from "@/api/token";
 
 let instance = axios.create({
-	baseURL: "http://43.200.180.31:8081",
+	baseURL: "http://43.200.181.40:8081",
 });
 instance.interceptors.response.use(ret => {
 	// if (typeof ret.data?.responseEntity !== "undefined") {

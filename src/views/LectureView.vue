@@ -15,8 +15,31 @@
         <div :class="$style['lecture-view-content__slide-content']">
           <vue3-markdown-it :class="$style['lecture-view-content__slide-markdown']" :source="chapters[chapterIndex].pages[pageIndex][0]"/>
         </div>
-        <div v-if="chapters[chapterIndex].pages[pageIndex].length > 1" :class="[$style['lecture-view-content__slide-content'], $style['lecture-view-content__slide-content-right']]">
-          <vue3-markdown-it :class="$style['lecture-view-content__slide-markdown']" :source="chapters[chapterIndex].pages[pageIndex][1]"/>
+        <div v-if="chapters[chapterIndex].pages[pageIndex].length > 1" :class="[$style['lecture-view-content__slide-content'], $style['lecture-view-content__slide-content-right']]"
+             style="padding: 0; overflow: hidden;">
+          <!--          <vue3-markdown-it :class="$style['lecture-view-content__slide-markdown']" :source="chapters[chapterIndex].pages[pageIndex][1]"/>-->
+          <div style="height: 3rem;background: white; color: black; display: flex; padding-left: 1rem; align-content: center; align-items: center; border-radius: 0 1rem 0 0;">
+            <span class="mdi mdi-chevron-right" style="display: inline-block; margin-right: .5rem;"></span>코드 테스트
+          </div>
+          <MonacoEditor style="height: 50vh;" :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
+                        value="asdf"
+                        class="editor" language="cpp" theme="vs-dark"/>
+          <div style="height: 3rem;background: white; color: black; display: flex; padding-left: 1rem; align-content: center; align-items: center; display: flex;">
+            <div style="flex: 1;">
+              <span class="mdi mdi-chevron-right" style="display: inline-block; margin-right: .5rem;"></span>표준 입력 (stdin)
+            </div>
+            <div style="flex: 1;">
+              <span class="mdi mdi-chevron-right" style="display: inline-block; margin-right: .5rem;"></span>표준 출력 (stdout)
+            </div>
+          </div>
+          <div style="display: flex; justify-content: space-between; height: 24vh;">
+            <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
+                          value="asdf"
+                          class="editor" language="cpp" theme="vs-dark"/>
+            <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
+                          value="asdf"
+                          class="editor" language="cpp" theme="vs-dark"/>
+          </div>
         </div>
         <div v-if="canPrevPage" :class="[$style['lecture-view-content__slide-page-btn'], $style['lecture-view-content__slide-page-btn-left']]">
           <div :class="$style['lecture-view-content__slide-page-btn-circle']" @click="prevPage">
@@ -35,12 +58,12 @@
 
 <script>
 import Navbar from "@/components/Navbar";
-import axios from "axios";
 import api from "@/api";
+import MonacoEditor from "monaco-editor-vue3";
 
 export default {
   name: 'LectureView',
-  components: {Navbar},
+  components: {Navbar, MonacoEditor},
   data() {
     return {
       intervalId: [],
@@ -187,7 +210,7 @@ export default {
 }
 
 .lecture-view-content__slide-content {
-  height: calc(100vh - 10rem - 1px);
+  height: calc(100vh - 9.8rem);
   flex: 1;
   width: 100%;
   padding: 1rem 1.5rem;
