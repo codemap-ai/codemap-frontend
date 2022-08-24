@@ -22,7 +22,7 @@
             <span class="mdi mdi-chevron-right" style="display: inline-block; margin-right: .5rem;"></span>코드 테스트
           </div>
           <MonacoEditor style="height: 50vh;" :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
-                        value="asdf"
+                        :value="chapters[chapterIndex].pages[pageIndex][1] ?? ''"
                         class="editor" language="cpp" theme="vs-dark"/>
           <div style="height: 3rem;background: white; color: black; display: flex; padding-left: 1rem; align-content: center; align-items: center; display: flex;">
             <div style="flex: 1;">
@@ -34,10 +34,10 @@
           </div>
           <div style="display: flex; justify-content: space-between; height: 24vh;">
             <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
-                          value="asdf"
+                          value=""
                           class="editor" language="cpp" theme="vs-dark"/>
             <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
-                          value="asdf"
+                          value=""
                           class="editor" language="cpp" theme="vs-dark"/>
           </div>
         </div>
