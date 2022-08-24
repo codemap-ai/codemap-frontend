@@ -48,8 +48,7 @@ export default {
 
 *:not(.MJX-TEX, .MJX-TEX *, .editor, .editor *) code {
   font-family: Consolas, serif;
-  background: #e5e5e5;
-  color: #db7e7a;
+  color: #ffbca2;
 }
 
 .editor .view-lines.monaco-mouse-cursor-text div span {
