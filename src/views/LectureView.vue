@@ -12,10 +12,10 @@
     <div :class="$style['lecture-view-content__main']">
       <div :class="$style['lecture-view-content__main-header-text']">{{ chapterIndex + 1 }}. {{ chapters[chapterIndex].title }}</div>
       <div :class="$style['lecture-view-content__slide']">
-        <div :class="$style['lecture-view-content__slide-content']">
+        <div :class="$style['lecture-view-content__slide-content']" style="line-height: 1.5rem;">
           <vue3-markdown-it :class="$style['lecture-view-content__slide-markdown']" :source="chapters[chapterIndex].pages[pageIndex][0]"/>
         </div>
-        <div v-if="chapters[chapterIndex].pages[pageIndex].length > 1" :class="[$style['lecture-view-content__slide-content'], $style['lecture-view-content__slide-content-right']]"
+        <div v-if="chapters[chapterIndex].pages[pageIndex].length > 1 || true" :class="[$style['lecture-view-content__slide-content'], $style['lecture-view-content__slide-content-right']]"
              style="padding: 0; overflow: hidden;">
           <!--          <vue3-markdown-it :class="$style['lecture-view-content__slide-markdown']" :source="chapters[chapterIndex].pages[pageIndex][1]"/>-->
           <div style="height: 3rem;background: white; color: black; display: flex; padding-left: 1rem; align-content: center; align-items: center; border-radius: 0 1rem 0 0;">

@@ -57,13 +57,13 @@
           </div>
         </div>
         
-        <vue3-markdown-it :source="currentProblem.legend" style="margin-top: 2rem;"/>
+        <vue3-markdown-it :source="currentProblem.legend" style="margin-top: 2rem; line-height: 1.5rem;"/>
         
         <div :class="$style['problem-solve-view-content__main-statement-header']">입력</div>
-        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.inputFormat"/>
+        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.inputFormat" style="line-height: 1.5rem;" />
         
         <div :class="$style['problem-solve-view-content__main-statement-header']">출력</div>
-        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.outputFormat"/>
+        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.outputFormat" style="line-height: 1.5rem;" />
         
         <div :class="$style['problem-solve-view-content__main-statement-header']" style="margin-bottom: 1rem;">예제</div>
         <div v-for="(_, index) in currentProblem.inputExamples">

@@ -46,6 +46,12 @@ export default {
   box-sizing: border-box;
 }
 
+*:not(.MJX-TEX, .MJX-TEX *, .editor, .editor *) code {
+  font-family: Consolas, serif;
+  background: #e5e5e5;
+  color: #db7e7a;
+}
+
 .editor .view-lines.monaco-mouse-cursor-text div span {
   width: auto !important;
 }
