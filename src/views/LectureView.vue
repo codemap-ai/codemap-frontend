@@ -16,29 +16,34 @@
           <vue3-markdown-it :class="$style['lecture-view-content__slide-markdown']" :source="chapters[chapterIndex].pages[pageIndex][0]"/>
         </div>
         <div v-if="chapters[chapterIndex].pages[pageIndex].length > 1 || true" :class="[$style['lecture-view-content__slide-content'], $style['lecture-view-content__slide-content-right']]"
-             style="padding: 0; overflow: hidden;">
+             style="padding: 0; overflow: hidden; position: relative;">
           <!--          <vue3-markdown-it :class="$style['lecture-view-content__slide-markdown']" :source="chapters[chapterIndex].pages[pageIndex][1]"/>-->
           <div style="height: 3rem;background: white; color: black; display: flex; padding-left: 1rem; align-content: center; align-items: center; border-radius: 0 1rem 0 0;">
             <span class="mdi mdi-chevron-right" style="display: inline-block; margin-right: .5rem;"></span>코드 테스트
           </div>
-          <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}" :value="chapters[chapterIndex].pages[pageIndex][1] ?? ''"
-                        class="editor"
+          <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}" :value="currentCode"
+                        class="editor" @change="onChangeCode"
                         language="cpp" style="height: 50vh;" theme="vs-dark"/>
-          <div style="height: 3rem;background: white; color: black; display: flex; padding-left: 1rem; align-content: center; align-items: center; display: flex;">
+          <div style="height: 3rem;background: white; color: black; display: flex; padding-left: 1rem; align-content: center; align-items: center;">
             <div style="flex: 1;">
               <span class="mdi mdi-chevron-right" style="display: inline-block; margin-right: .5rem;"></span>표준 입력 (stdin)
             </div>
             <div style="flex: 1;">
-              <span class="mdi mdi-chevron-right" style="display: inline-block; margin-right: .5rem;"></span>표준 출력 (stdout)
+              <span class="mdi mdi-chevron-right" style="display: inline-block; margin-right: .5rem;"></span>출력 결과 (stdout)
             </div>
           </div>
           <div style="display: flex; justify-content: space-between; height: 24vh;">
             <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
+                          class="editor" @change="onChangeTestInput"
+                          language="plaintext" theme="vs-dark" :value="currentInput"/>
+            <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false, readOnly: true,}"
                           class="editor"
-                          language="cpp" theme="vs-dark" value=""/>
-            <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
-                          class="editor"
-                          language="cpp" theme="vs-dark" value=""/>
+                          language="plaintext" theme="vs-dark" :value="currentOutput"/>
+          </div>
+          <div
+              style="position: absolute; right: 1rem; bottom: 1rem; background: #3476f6; color: white; padding: 1rem; display: flex; justify-content: center; align-items: center; border-radius: 2rem;"
+              @click="submitTestCode">
+            <span class="mdi mdi-chevron-right"></span>
           </div>
         </div>
         <div v-if="canPrevPage" :class="[$style['lecture-view-content__slide-page-btn'], $style['lecture-view-content__slide-page-btn-left']]">
@@ -74,9 +79,24 @@ export default {
       pageIndex: 0,
       lockedForRender: false,
       chapters: [],
+      
+      currentCode: "",
+      currentInput: "",
+      currentOutput: "",
     };
   },
   methods: {
+    onChangeCode(value) {
+      this.currentCode = value;
+    },
+    onChangeTestInput(value) {
+      this.currentInput = value;
+    },
+    movePage() {
+      this.currentCode = this.chapters[this.chapterIndex].pages[this.pageIndex][1] ?? '';
+      this.currentInput = "";
+      this.currentOutput = "";
+    },
     prevPage() {
       if (this.pageIndex === 0) {
         if (this.chapterIndex === 0) {
@@ -87,6 +107,8 @@ export default {
       } else {
         this.pageIndex--;
       }
+      
+      this.movePage();
     },
     nextPage() {
       if (this.pageIndex + 1 === this.chapters[this.chapterIndex].pages.length) {
@@ -98,6 +120,8 @@ export default {
       } else {
         this.pageIndex++;
       }
+      
+      this.movePage();
     },
     async renderMathJax() {
       if (this.lockedForRender) {
@@ -109,6 +133,9 @@ export default {
       }
       MathJax.typeset();
       this.lockedForRender = false;
+    },
+    async submitTestCode() {
+      this.currentOutput = String(await api.submit.test(this.currentCode, this.currentInput, "cpp"));
     },
   },
   computed: {
@@ -136,6 +163,7 @@ export default {
     this.isLoading = false;
     
     this.intervalId.push(setInterval(this.renderMathJax, 100));
+    this.movePage();
   },
 }
 </script>

@@ -3,6 +3,7 @@ import {getToken} from "@/api/token";
 
 let instance = axios.create({
 	baseURL: "https://api.codemap.ai",
+	timeout: 5000, // 5 seconds
 });
 instance.interceptors.response.use(ret => {
 	// if (typeof ret.data?.responseEntity !== "undefined") {

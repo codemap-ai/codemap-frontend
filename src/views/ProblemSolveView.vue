@@ -236,7 +236,7 @@ export default {
       
       this.saveCode();
       
-      let submissionId = (await api.submit(this.currentProblem.problemId, this.contestId, this.language, this.code, this.testMode, this.testInput)).submissionId;
+      let submissionId = (await api.submit.problem(this.currentProblem.problemId, this.contestId, this.language, this.code, this.testMode, this.testInput)).submissionId;
       let {id} = this.socket.subscribe("/topic/chat/room/" + submissionId, message => {
         this.socket.unsubscribe(id);
         this.subscribeIds.delete(id);
