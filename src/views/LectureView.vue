@@ -41,9 +41,9 @@
                           language="plaintext" theme="vs-dark" :value="currentOutput"/>
           </div>
           <div
-              style="position: absolute; right: 1rem; bottom: 1rem; background: #3476f6; color: white; padding: 1rem; display: flex; justify-content: center; align-items: center; border-radius: 2rem; cursor: pointer;"
+              style="position: absolute; right: 1rem; bottom: 1rem; background: #3476f6; color: white; padding: 1rem 2rem; display: flex; justify-content: center; align-items: center; border-radius: 2rem; cursor: pointer;"
               @click="submitTestCode">
-            <span class="mdi mdi-chevron-right"></span>
+            테스트
           </div>
         </div>
         <div v-if="canPrevPage" :class="[$style['lecture-view-content__slide-page-btn'], $style['lecture-view-content__slide-page-btn-left']]">
