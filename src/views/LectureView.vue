@@ -1,5 +1,5 @@
 <template>
-  <Navbar dropdown="강의" :title="title" title_desc="현재 강의"/>
+  <Navbar :title="title" dropdown="강의" title_desc="현재 강의"/>
   <div v-if="!isLoading" :class="$style['lecture-view-content']">
     <div :class="$style['lecture-view-content__sidebar']">
       <div :class="$style['lecture-view-content__sidebar-expand-btn']">
@@ -21,9 +21,9 @@
           <div style="height: 3rem;background: white; color: black; display: flex; padding-left: 1rem; align-content: center; align-items: center; border-radius: 0 1rem 0 0;">
             <span class="mdi mdi-chevron-right" style="display: inline-block; margin-right: .5rem;"></span>코드 테스트
           </div>
-          <MonacoEditor style="height: 50vh;" :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
-                        :value="chapters[chapterIndex].pages[pageIndex][1] ?? ''"
-                        class="editor" language="cpp" theme="vs-dark"/>
+          <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}" :value="chapters[chapterIndex].pages[pageIndex][1] ?? ''"
+                        class="editor"
+                        language="cpp" style="height: 50vh;" theme="vs-dark"/>
           <div style="height: 3rem;background: white; color: black; display: flex; padding-left: 1rem; align-content: center; align-items: center; display: flex;">
             <div style="flex: 1;">
               <span class="mdi mdi-chevron-right" style="display: inline-block; margin-right: .5rem;"></span>표준 입력 (stdin)
@@ -34,11 +34,11 @@
           </div>
           <div style="display: flex; justify-content: space-between; height: 24vh;">
             <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
-                          value=""
-                          class="editor" language="cpp" theme="vs-dark"/>
+                          class="editor"
+                          language="cpp" theme="vs-dark" value=""/>
             <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
-                          value=""
-                          class="editor" language="cpp" theme="vs-dark"/>
+                          class="editor"
+                          language="cpp" theme="vs-dark" value=""/>
           </div>
         </div>
         <div v-if="canPrevPage" :class="[$style['lecture-view-content__slide-page-btn'], $style['lecture-view-content__slide-page-btn-left']]">

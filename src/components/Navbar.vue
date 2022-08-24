@@ -5,16 +5,16 @@
     </div>
     <!--    <Dropdown :default_value="dropdown" :direction="false" :options="dropdownOptions" height="3.5rem"/>-->
     <div style="display: flex; align-items: center; justify-content: center; padding: .5rem; border-right: 1px solid rgba(0, 0, 0, .1);">
-      <div v-for="([display, value, callback]) of dropdownOptions" @click="callback" style="padding: 0 .5rem; margin: 0 1rem; cursor: pointer;">
+      <div v-for="([display, value, callback]) of dropdownOptions" style="padding: 0 .5rem; margin: 0 1rem; cursor: pointer;" @click="callback">
         {{ display }}
       </div>
     </div>
-    <div :class="$style['navbar__detail']" v-if="title_desc?.trim() !== undefined || title?.trim() !== undefined" style="display: flex; justify-content: space-between; flex: 1;">
+    <div v-if="title_desc?.trim() !== undefined || title?.trim() !== undefined" :class="$style['navbar__detail']" style="display: flex; justify-content: space-between; flex: 1;">
       <div>
         <span :class="$style['navbar__current-lecture']">{{ title_desc }}</span>
         <span>{{ title }}</span>
       </div>
-      <div style="display: flex; align-items: center;" v-if="contestMode === true">
+      <div v-if="contestMode === true" style="display: flex; align-items: center;">
         <div style="margin-right: 1rem;">
           모의고사 종료까지 {{ remainTimeString }}
         </div>

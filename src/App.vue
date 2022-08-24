@@ -1,5 +1,5 @@
 <template>
-  <router-view v-if="renderRouter" />
+  <router-view v-if="renderRouter"/>
 </template>
 
 <script>

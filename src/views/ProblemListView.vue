@@ -7,10 +7,10 @@
         전체 문제 목록
       </div>
     </div>
-    <Table :headers="['문제 번호', '문제 이름']" :values="problems.map(({title, problemId}) => [
+    <Table :headers="['문제 번호', '문제 이름']" :links="problems.map(({problemId}) => `/problem/${problemId}`)" :ratio="[1, 3]" :values="problems.map(({title, problemId}) => [
         problemId,
         title,
-    ])" :links="problems.map(({problemId}) => `/problem/${problemId}`)" :ratio="[1, 3]"/>
+    ])"/>
   </div>
 </template>
 
@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       isLoading: true,
-
+      
       problems: [],
     };
   },

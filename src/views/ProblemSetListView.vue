@@ -7,11 +7,11 @@
         전체 문제집 목록
       </div>
     </div>
-    <Table :headers="['문제집 번호', '문제집 이름', '모의고사 시간']" :values="problemSets.map(({problemSetId, title, duration}) => [
+    <Table :headers="['문제집 번호', '문제집 이름', '모의고사 시간']" :links="problemSets.map(({problemSetId}) => `/problem_set/${problemSetId}`)" :ratio="[1, 1, 1]" :values="problemSets.map(({problemSetId, title, duration}) => [
         problemSetId,
         title,
         `${duration}분`,
-    ])" :links="problemSets.map(({problemSetId}) => `/problem_set/${problemSetId}`)" :ratio="[1, 1, 1]"/>
+    ])"/>
   </div>
 </template>
 

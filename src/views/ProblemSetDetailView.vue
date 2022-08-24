@@ -13,11 +13,11 @@
         모의고사 시작<span class="mdi mdi-arrow-right" style="margin-left: .2rem;"></span>
       </div>
     </div>
-    <Table :headers="['대회 번호', '문제 번호', '문제 이름']" :values="problems.map(({problemId, title}, index) => [
+    <Table :headers="['대회 번호', '문제 번호', '문제 이름']" :ratio="[1, 1, 3]" :values="problems.map(({problemId, title}, index) => [
         String.fromCharCode('A'.charCodeAt(0) + index),
         problemId,
         title
-    ])" :ratio="[1, 1, 3]"/>
+    ])"/>
   </div>
 </template>
 

@@ -9,8 +9,9 @@
       <div style="margin-top: 1rem;">
         {{ description }}
       </div>
-      <router-link style="position: absolute; bottom: 1.5rem; right: 1.5rem; display: flex; align-items: center; align-content: center; align-self: center; font-size: .9rem; color: #3476f6; text-decoration: inherit;"
-         :to="`/curriculum/${categoryId}`">
+      <router-link
+          :to="`/curriculum/${categoryId}`"
+          style="position: absolute; bottom: 1.5rem; right: 1.5rem; display: flex; align-items: center; align-content: center; align-self: center; font-size: .9rem; color: #3476f6; text-decoration: inherit;">
         커리큘럼 보기<span class="mdi mdi-arrow-right" style="margin-left: .2rem;"></span>
       </router-link>
     </div>

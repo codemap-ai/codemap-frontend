@@ -1,6 +1,6 @@
 <template>
-  <Navbar v-if="problemIndex > -1" :finish-contest="finishContest" :remain-time="contestNavbarRemain" :contest-mode="contestMode"
-          :title="`${ contestMode ? `[${contestTitle}] ${problemIndex + 1}. ` : '' }${currentProblem.title}`" :dropdown="contestMode ? `대회` : `문제`" title_desc="현재 문제"/>
+  <Navbar v-if="problemIndex > -1" :contest-mode="contestMode" :dropdown="contestMode ? `대회` : `문제`" :finish-contest="finishContest"
+          :remain-time="contestNavbarRemain" :title="`${ contestMode ? `[${contestTitle}] ${problemIndex + 1}. ` : '' }${currentProblem.title}`" title_desc="현재 문제"/>
   <div v-if="problemIndex === -1"></div>
   <div v-else :class="$style['problem-solve-view-content']">
     <div v-if="contestMode" :class="$style['problem-solve-view-content__sidebar']">
@@ -47,8 +47,8 @@
               </div>
               <div v-else :style="`flex: 3; color: ${result.color}; font-weight: ${result.bold ? 600 : 400};`">{{ result.displayText }}</div>
               <div style="flex: 3;">{{ toDisplayText(usedLanguage) }}</div>
-              <div :class="$style['problem-solve-view-content__main-submission-detail-btn']" @click="result !== judgeResults.WAITING ? submissionIndex = index : 0;"
-                   :style="`${result !== judgeResults.WAITING ? '' : 'cursor: not-allowed; background: inherit !important;'}`">
+              <div :class="$style['problem-solve-view-content__main-submission-detail-btn']" :style="`${result !== judgeResults.WAITING ? '' : 'cursor: not-allowed; background: inherit !important;'}`"
+                   @click="result !== judgeResults.WAITING ? submissionIndex = index : 0;">
                 <span class="mdi mdi-archive-outline"></span></div>
             </div>
             <div v-else :class="$style['problem-solve-view-content__main-submission-list-element']" style="color: rgba(0, 0, 0, .6); font-style: italic; font-size: .9rem; margin: .5rem 0;">
@@ -60,10 +60,10 @@
         <vue3-markdown-it :source="currentProblem.legend" style="margin-top: 2rem; line-height: 1.5rem;"/>
         
         <div :class="$style['problem-solve-view-content__main-statement-header']">입력</div>
-        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.inputFormat" style="line-height: 1.5rem;" />
+        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.inputFormat" style="line-height: 1.5rem;"/>
         
         <div :class="$style['problem-solve-view-content__main-statement-header']">출력</div>
-        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.outputFormat" style="line-height: 1.5rem;" />
+        <vue3-markdown-it :class="$style['problem-solve-view-content__main-statement-body']" :source="currentProblem.outputFormat" style="line-height: 1.5rem;"/>
         
         <div :class="$style['problem-solve-view-content__main-statement-header']" style="margin-bottom: 1rem;">예제</div>
         <div v-for="(_, index) in currentProblem.inputExamples">
@@ -74,15 +74,15 @@
         </div>
       </div>
       <div :class="[$style['problem-solve-view-content__main-editor']]">
-        <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
-                      :class="{[$style['problem-solve-view-content__main-editor--contest-mode']]: contestMode, [$style['problem-solve-view-content__main-editor--test-mode']]: testMode}" :value="code"
+        <MonacoEditor :class="{[$style['problem-solve-view-content__main-editor--contest-mode']]: contestMode, [$style['problem-solve-view-content__main-editor--test-mode']]: testMode}"
+                      :options="{automaticLayout: true, scrollBeyondLastLine: false,}" :value="code"
                       class="editor" language="cpp" theme="vs-dark" @change="onChangeCode"/>
         <div v-if="testMode" :class="$style['problem-solve-view-content__main-editor--test-mode']">
           <div :class="$style['problem-solve-view-content__main-editor--test-input']">
             <span class="mdi mdi-chevron-right" style="display: inline-block; margin-right: .5rem;"></span>표준 입력 (stdin)
           </div>
-          <MonacoEditor :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
-                        :class="[{[$style['problem-solve-view-content__main-editor--contest-mode']]: contestMode}, $style['problem-solve-view-content__main-editor--test-mode-second']]"
+          <MonacoEditor :class="[{[$style['problem-solve-view-content__main-editor--contest-mode']]: contestMode}, $style['problem-solve-view-content__main-editor--test-mode-second']]"
+                        :options="{automaticLayout: true, scrollBeyondLastLine: false,}"
                         :value="testInput" class="editor" language="plaintext" theme="vs-dark" @change="onChangeTestInput"/>
         </div>
         <div :class="$style['problem-solve-view-content__main-editor-menu']">

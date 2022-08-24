@@ -2,7 +2,8 @@
   <div :class="$style['dropdown__value']" :style="`position: relative; height: ${height};`" @click="toggleDropdown">
     {{ options.find(v => v[1] === value || v[0] === value)[0] }}<span :class="['mdi', (dropdownOpened ^ direction) ? 'mdi-chevron-up' : 'mdi-chevron-down']" style="margin: 0 .25rem;"></span>
     <div v-if="dropdownOpened" :class="[$style['dropdown__expand-section'], {[$style['dropdown__expand-section--reverse']]: direction}]">
-      <div v-for="([display, value, cb], index) in options" :key="index" :class="[$style['dropdown__expand-value'], $style['dropdown__value']]" :style="`height: ${height};`" @click="click(value, cb);">
+      <div v-for="([display, value, cb], index) in options" :key="index" :class="[$style['dropdown__expand-value'], $style['dropdown__value']]" :style="`height: ${height};`"
+           @click="click(value, cb);">
         {{ display }}
       </div>
     </div>
