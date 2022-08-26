@@ -62,4 +62,16 @@ export default {
 .hljs, .hljs * {
   font-family: Consolas, D2Coding, 'D2 coding', monospace;
 }
+
+table {
+  border-collapse: collapse;
+}
+
+tr {
+  border-bottom: 1px solid rgba(0, 0, 0, .2);
+}
+
+th, td {
+  padding: .5rem;
+}
 </style>
