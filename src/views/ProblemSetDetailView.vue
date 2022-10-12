@@ -26,6 +26,7 @@ import StartContest from "@/components/StartContest";
 import Navbar from "@/components/Navbar";
 import api from "@/api";
 import Table from "@/components/Table";
+import {isLogin} from "@/api/token";
 
 export default {
   name: "ProblemSetDetailView",
@@ -46,6 +47,12 @@ export default {
   },
   methods: {
     async startContest() {
+      if (!isLogin()) {
+        alert("로그인 후 이용하세요.");
+        this.$router.push("/login");
+        return;
+      }
+  
       let contestId = await api.contests.startContest(this.problem_set_id);
       this.$router.push(`/contest/${contestId}`);
     },

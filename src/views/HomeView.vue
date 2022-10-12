@@ -12,9 +12,12 @@
     <div class="container">
       <section class="top">
         <a href="#" class="logo"></a>
-        <ul>
-          <li><router-link to="/login" class="join">가입</router-link></li>
-          <li><router-link to="/register" class="login">로그인</router-link></li>
+        <ul v-if="!isLogin">
+          <li><router-link to="/register" class="join">가입</router-link></li>
+          <li><router-link to="/login" class="login">로그인</router-link></li>
+        </ul>
+        <ul v-else>
+          <li><a href="#" @click="logout" class="join">로그아웃</a></li>
         </ul>
       </section>
       
@@ -70,7 +73,7 @@
 <script>
 import StartContest from "@/components/StartContest";
 import api from "@/api";
-import {setToken} from "@/api/token";
+import {isLogin} from "@/api/token";
 import Navbar from "@/components/Navbar";
 
 export default {
@@ -81,37 +84,19 @@ export default {
   },
   data() {
     return {
-      id: "test1234",
-      pw: "asdfasdf",
+    
     };
+  },
+  computed: {
+    isLogin() {
+      return isLogin();
+    },
   },
   methods: {
     logout() {
       localStorage.removeItem("token");
       alert("로그아웃 했습니다.");
       location.reload();
-    },
-    async login() {
-      let ret = await api.users.signin(this.id, this.pw);
-      if (ret.token !== undefined) {
-        localStorage.setItem("token", ret.token);
-        setToken(ret.token);
-        alert(`로그인 했습니다.\ntoken : ${ret.token}`);
-      } else {
-        alert('로그인 실패');
-      }
-    },
-    async register() {
-      let ret = await api.users.signup(this.id, this.pw, "닉네임");
-      if (ret.message !== undefined) {
-        alert(ret.message);
-        return;
-      }
-      if (ret.username === undefined) {
-        alert("회원가입 실패");
-        return;
-      }
-      await this.login();
     },
   }
 }

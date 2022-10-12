@@ -1,10 +1,11 @@
 import axios from "./localAxios";
 
-const signup = async (username, password, nickname) =>
+const signup = async (username, password, nickname, email) =>
 	await axios.post("/users/signup", JSON.stringify({
 		username,
 		password,
 		nickname,
+		email,
 	}), {
 		headers: {
 			"Content-Type": "application/json",

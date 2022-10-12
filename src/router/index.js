@@ -7,6 +7,8 @@ import LectureCategoryDetailView from "@/views/LectureCategoryDetailView";
 import ProblemSetDetailView from "@/views/ProblemSetDetailView";
 import ProblemSetListView from "@/views/ProblemSetListView";
 import ProblemListView from "@/views/ProblemListView";
+import LoginView from "@/views/LoginView.vue";
+import RegisterView from "@/views/RegisterView.vue";
 
 const routes = [
 	{
@@ -53,6 +55,16 @@ const routes = [
 		path: '/problem_set/:problem_set_id',
 		name: 'ProblemSetDetailView',
 		component: ProblemSetDetailView,
+	},
+	{
+		path: '/login',
+		name: 'LoginView',
+		component: LoginView,
+	},
+	{
+		path: '/register',
+		name: 'RegisterView',
+		component: RegisterView,
 	},
 ]
 

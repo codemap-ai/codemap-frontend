@@ -326,7 +326,7 @@ export default {
   async created() {
     if (!isLogin()) {
       alert("로그인 후 이용하세요");
-      this.$router.go(-1);
+      this.$router.push("/login");
       return;
     }
     
