@@ -16,6 +16,9 @@
             style="width: 15rem; height: 2.5rem; background: #3376f6; border-radius: 1rem; display: flex; align-items: center; justify-content: center; color: white; margin-top: 1.5rem; cursor:pointer;"
             @click="login">로그인
         </div>
+        <a href="https://api.codemap.ai/users/oauth/kakao/signin">
+          <img src="/img/kakao_login_large_wide.png" style="width: 100%; margin-top: 1rem;">
+        </a>
       </div>
     </div>
   </div>
