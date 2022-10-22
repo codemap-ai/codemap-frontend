@@ -29,4 +29,14 @@ const me = async () =>
 		},
 	});
 
-export default {signup, signin, me};
+const resetPassword = async (username, email) =>
+		await axios.post("/users/password/find", JSON.stringify({
+			username,
+			email,
+		}), {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+export default {signup, signin, me, resetPassword};

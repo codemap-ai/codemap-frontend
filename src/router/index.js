@@ -9,6 +9,7 @@ import ProblemSetListView from "@/views/ProblemSetListView";
 import ProblemListView from "@/views/ProblemListView";
 import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
+import ResetPasswordView from "@/views/ResetPasswordView.vue";
 
 const routes = [
 	{
@@ -65,6 +66,11 @@ const routes = [
 		path: '/register',
 		name: 'RegisterView',
 		component: RegisterView,
+	},
+	{
+		path: '/reset',
+		name: 'ResetPasswordView',
+		component: ResetPasswordView,
 	},
 ]
 

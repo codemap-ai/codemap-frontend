@@ -8,20 +8,14 @@
         <div style="color: white; margin-top: 1rem;">알고리즘 대회 준비를 위한 길라잡이</div>
       </div>
       <div style="flex: 1; border-radius: 2rem 0 0 2rem; padding: 5rem; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <div style="font-size: 1.5rem; font-weight: 500;">로그인</div>
+        <div style="font-size: 1.5rem; font-weight: 500;">비밀번호 재설정</div>
         <div style="background: #3376f6; width: 2rem; height: .1rem; margin-top: .7rem; margin-bottom: 1rem;"></div>
         <input style="width: 15rem; height: 1rem; padding: 1rem; border: 1px solid #3376f6; border-radius: 1rem;" placeholder="아이디" v-model="id">
-        <input style="width: 15rem; height: 1rem; padding: 1rem; border: 1px solid #3376f6; border-radius: 1rem; margin-top: .5rem;" placeholder="비밀번호" v-model="pw" type="password">
+        <input style="width: 15rem; height: 1rem; padding: 1rem; border: 1px solid #3376f6; border-radius: 1rem; margin-top: .5rem;" placeholder="이메일" v-model="email" type="email">
         <div
             style="width: 15rem; height: 2.5rem; background: #3376f6; border-radius: 1rem; display: flex; align-items: center; justify-content: center; color: white; margin-top: 1.5rem; cursor:pointer;"
-            @click="login">로그인
+            @click="reset">재설정
         </div>
-        <a href="https://api.codemap.ai/users/oauth/kakao/signin">
-          <img src="/img/kakao_login_large_wide.png" style="width: 15rem; margin-top: 1rem;">
-        </a>
-        <p style="font-size: .8rem; margin-top: .5rem; text-align: center;">
-          비밀번호가 기억나지 않으신가요? <router-link to="/reset" style="color: #3476f6;">비밀번호 재설정</router-link>
-        </p>
       </div>
     </div>
   </div>
@@ -33,12 +27,12 @@ import api from "@/api";
 import {setToken, isLogin} from "@/api/token";
 
 export default {
-  name: "Login",
+  name: "ResetPasswordView",
   components: {Navbar},
   data() {
     return {
       id: "",
-      pw: "",
+      email: "",
     };
   },
   created() {
@@ -47,16 +41,12 @@ export default {
     }
   },
   methods: {
-    async login() {
-      let ret = await api.users.signin(this.id, this.pw);
-      if (ret.token !== undefined) {
-        localStorage.setItem("token", ret.token);
-        setToken(ret.token);
-        // this.$router.push("/");
-        this.$router.go(-1);
-        // alert(`로그인 했습니다.\ntoken : ${ret.token}`);
+    async reset() {
+      let ret = await api.users.resetPassword(this.id, this.email);
+      if (ret.username !== undefined) {
+        alert("등록된 이메일로 재설정된 비밀번호를 전송했습니다.");
       } else {
-        alert('아이디 또는 비밀번호가 잘못되었습니다.');
+        alert("등록된 정보가 없습니다.");
       }
     },
   },
