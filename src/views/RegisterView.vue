@@ -12,8 +12,8 @@
         <div style="background: #3376f6; width: 2rem; height: .1rem; margin-top: .7rem; margin-bottom: 1rem;"></div>
         <input style="width: 15rem; height: 1rem; padding: 1rem; border: 1px solid #3376f6; border-radius: 1rem;" placeholder="아이디" v-model="id">
         <input style="width: 15rem; height: 1rem; padding: 1rem; border: 1px solid #3376f6; border-radius: 1rem; margin-top: .5rem;" placeholder="비밀번호" v-model="pw" type="password">
-        <input style="width: 15rem; height: 1rem; padding: 1rem; border: 1px solid #3376f6; border-radius: 1rem; margin-top: .5rem;" placeholder="이메일" v-model="nickname" type="email">
-        <input style="width: 15rem; height: 1rem; padding: 1rem; border: 1px solid #3376f6; border-radius: 1rem; margin-top: .5rem;" placeholder="닉네임" v-model="email">
+        <input style="width: 15rem; height: 1rem; padding: 1rem; border: 1px solid #3376f6; border-radius: 1rem; margin-top: .5rem;" placeholder="이메일" v-model="email" type="email">
+        <input style="width: 15rem; height: 1rem; padding: 1rem; border: 1px solid #3376f6; border-radius: 1rem; margin-top: .5rem;" placeholder="닉네임" v-model="nickname">
         <div
             style="width: 15rem; height: 2.5rem; background: #3376f6; border-radius: 1rem; display: flex; align-items: center; justify-content: center; color: white; margin-top: 1.5rem; cursor:pointer;"
             @click="register">회원가입
