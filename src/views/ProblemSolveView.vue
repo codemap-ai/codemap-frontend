@@ -123,6 +123,14 @@
               <span><span :class="$style['problem-solve-view-content__main-problem-info-value']">{{ currentSubmission.score }}</span> / 100점</span>
             </div>
           </div>
+          <div v-if="currentSubmission.result === judgeResults.COMPILATION_ERROR">
+            <div style="font-weight: 500; font-size: 1.1rem; margin-top: 1rem;">컴파일 에러</div>
+            <monaco-editor
+                :options="{automaticLayout: true, readOnly: true, scrollBeyondLastLine: false, minimap: {enabled: false}, lineNumbers: 'off', folding: true, lineDecorationsWidth: 0, lineNumbersMinChars: 0}"
+                :value="currentSubmission.compilerMessage" class="editor" language="plaintext"
+                style="width: calc(80vw - 5rem); height: 5rem; margin: .5rem 0 2rem 0;"
+                theme="vs-dark"></monaco-editor>
+          </div>
           <div v-else>
             <div style="font-weight: 500; font-size: 1.1rem; margin-top: 1rem;">출력</div>
             <monaco-editor
