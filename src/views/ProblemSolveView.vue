@@ -311,7 +311,8 @@ export default {
     async finishContest() {
       await api.contests.finishContest(this.contestId);
       alert("대회를 종료했습니다.");
-      this.$router.push("/");
+      // this.$router.push("/");
+      location.assign(`https://scoreboard.codemap.ai/${this.problemSetId}`);
     },
   },
   computed: {
@@ -340,7 +341,6 @@ export default {
     
     let problemIds = [];
     if (this.contestMode) {
-      let problemSetId;
       try {
         let contestInfo = await api.contests.getContestById(this.contestId);
         if (contestInfo.finishTime !== null) {
@@ -349,14 +349,14 @@ export default {
           return;
         }
         this.contestStart = Math.floor((new Date(contestInfo.createTime)).getTime() / 1000);
-        problemSetId = contestInfo.problemSetId;
+        this.problemSetId = contestInfo.problemSetId;
       } catch (e) {
         alert("존재하지 않는 대회");
         this.$router.go(-1);
         return;
       }
       
-      let problemSetInfo = await api.problemset.getProblemSetById(problemSetId);
+      let problemSetInfo = await api.problemset.getProblemSetById(this.problemSetId);
       this.contestTitle = problemSetInfo.title;
       this.contestDuration = problemSetInfo.duration * 60;
       for (let {problemId} of problemSetInfo.problemList) {
@@ -376,7 +376,8 @@ export default {
         this.contestNavbarRemain = this.contestStart + this.contestDuration - Math.floor(Date.now() / 1000);
         if (this.contestNavbarRemain < 0) {
           alert("대회가 종료되었습니다.");
-          this.$router.push("/");
+          // this.$router.push("/");
+          location.assign(`https://scoreboard.codemap.ai/${this.problemSetId}`);
         }
       }, 1000));
     }
