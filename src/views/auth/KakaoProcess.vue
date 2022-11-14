@@ -14,7 +14,7 @@ export default {
       this.$router.push("/");
       return;
     }
-    let ret = api.users.registerKakaoInfo(id);
+    let ret = await api.users.registerKakaoInfo(id);
     if (ret.username !== undefined) {
       alert("카카오 계정과 연결했습니다.");
     } else {
