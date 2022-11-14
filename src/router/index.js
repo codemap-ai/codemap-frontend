@@ -81,12 +81,12 @@ const routes = [
 		component: MyPageView,
 	},
 	{
-		path: '/jwt/:jwt',
+		path: '/auth/:jwt',
 		name: 'JWT',
 		component: JwtProcess,
 	},
 	{
-		path: '/jwt',
+		path: '/auth',
 		name: 'JWTFail',
 		component: JwtProcess,
 	},
