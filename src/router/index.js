@@ -10,6 +10,9 @@ import ProblemListView from "@/views/ProblemListView";
 import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import ResetPasswordView from "@/views/ResetPasswordView.vue";
+import MyPageView from "@/views/MyPageView.vue";
+import JwtProcess from "@/views/auth/JwtProcess.vue";
+import KakaoProcess from "@/views/auth/KakaoProcess.vue";
 
 const routes = [
 	{
@@ -71,6 +74,31 @@ const routes = [
 		path: '/reset',
 		name: 'ResetPasswordView',
 		component: ResetPasswordView,
+	},
+	{
+		path: '/info',
+		name: 'MyPageView',
+		component: MyPageView,
+	},
+	{
+		path: '/jwt/:jwt',
+		name: 'JWT',
+		component: JwtProcess,
+	},
+	{
+		path: '/jwt',
+		name: 'JWTFail',
+		component: JwtProcess,
+	},
+	{
+		path: '/id/:id',
+		name: 'ID',
+		component: KakaoProcess,
+	},
+	{
+		path: '/id',
+		name: 'IDFail',
+		component: KakaoProcess,
 	},
 ]
 

@@ -37,6 +37,7 @@ export default {
         ["커리큘럼", "커리큘럼", () => this.$router.push("/curriculum/")],
         ["문제집", "문제집", () => this.$router.push("/problem_set")],
         ["문제", "문제", () => this.$router.push("/problem/")],
+        ["내 정보", "내 정보", () => this.$router.push("/info/")],
       ],
     };
   },

@@ -39,4 +39,20 @@ const resetPassword = async (username, email) =>
 			},
 		});
 
-export default {signup, signin, me, resetPassword};
+const getKakaoInfo = async () =>
+	await axios.get("/users/oauth/kakao/info", {
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+
+const registerKakaoInfo = async (id) =>
+	await axios.post("/users/kakao/interlock", JSON.stringify({
+		id,
+	}), {
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+
+export default {signup, signin, me, resetPassword, getKakaoInfo, registerKakaoInfo};

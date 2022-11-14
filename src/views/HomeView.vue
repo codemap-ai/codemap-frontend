@@ -17,7 +17,8 @@
           <li><router-link to="/login" class="login">로그인</router-link></li>
         </ul>
         <ul v-else>
-          <li><a href="#" @click="logout" class="join">로그아웃</a></li>
+          <li><router-link to="/info" class="join">내 정보</router-link></li>
+          <li><a href="#" @click="logout" class="login">로그아웃</a></li>
         </ul>
       </section>
       
