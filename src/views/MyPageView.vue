@@ -7,7 +7,7 @@
         <div style="font-size: 1.5rem; font-weight: bold;">{{ user.username }}</div>
         <div style="color: grey; font-size: 0.9rem;">{{ user.nickname }}</div>
         <div style="flex: .5;"></div>
-        <a v-if="kakao === undefined" href="https://api.codemap.ai/users/oauth/kakao/getId">
+        <a v-if="user?.image === undefined" href="https://api.codemap.ai/users/oauth/kakao/getId">
           <img src="/img/kakao_login_large_wide.png" style="width: 15rem; margin-top: 1rem;">
         </a>
         <div v-else style="font-style: italic; color: grey; font-size: .9rem;">
