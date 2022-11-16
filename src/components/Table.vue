@@ -5,7 +5,7 @@
     </div>
     <div v-for="(value, idx1) of values" style="display: flex; padding-bottom: .7rem; margin-bottom: .7rem; border-bottom: 1px solid rgba(0, 0, 0, .1);">
       <div v-for="(text, idx2) of value" :style="`flex: ${ratio[idx2]}; text-align: center; ${(links ?? [])[idx1] === undefined ? '' : 'cursor: pointer; text-decoration: underline; color: #4674ee;'}`"
-           @click="(links ?? [])[idx1] === undefined ? '' : this.$router.push(links[idx1]);">{{ text }}
+           @click="moveURL((links ?? [])[idx1])">{{ text }}
       </div>
     </div>
   </div>
@@ -15,6 +15,16 @@
 export default {
   name: "Table",
   props: ["headers", "values", "ratio", "links"],
+  methods: {
+    moveURL(url) {
+      if (url === undefined) return;
+      if (url.startsWith("https://")) {
+        window.open(url);
+      } else {
+        this.$router.push(url);
+      }
+    },
+  }
 }
 </script>
 

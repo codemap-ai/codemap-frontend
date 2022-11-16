@@ -55,4 +55,11 @@ const registerKakaoInfo = async (id) =>
 		},
 	});
 
-export default {signup, signin, me, resetPassword, getKakaoInfo, registerKakaoInfo};
+const getSolved = async () =>
+	await axios.get("/users/solved", {
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+
+export default {signup, signin, me, resetPassword, getKakaoInfo, registerKakaoInfo, getSolved};
