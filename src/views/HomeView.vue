@@ -13,11 +13,17 @@
       <section class="top">
         <a href="#" class="logo"></a>
         <ul v-if="!isLogin">
-          <li><router-link to="/register" class="join">가입</router-link></li>
-          <li><router-link to="/login" class="login">로그인</router-link></li>
+          <li>
+            <router-link to="/register" class="join">가입</router-link>
+          </li>
+          <li>
+            <router-link to="/login" class="login">로그인</router-link>
+          </li>
         </ul>
         <ul v-else>
-          <li><router-link to="/info" class="join">내 정보</router-link></li>
+          <li>
+            <router-link to="/info" class="join">내 정보</router-link>
+          </li>
           <li><a href="#" @click="logout" class="login">로그아웃</a></li>
         </ul>
       </section>
@@ -31,33 +37,36 @@
         </div>
         
         <div class="codemap-btns">
-          <div class="codemap-btn btn01">
-            <ul>
-              <li>
-                <h5>알고리즘</h5>
-                <p>기초부터 고급까지<br>준비된 학습자료</p>
-              </li>
-              <li><router-link to="/curriculum/"></router-link></li>
-            </ul>
-          </div>
-          <div class="codemap-btn btn02">
-            <ul>
-              <li>
-                <h5>모의고사</h5>
-                <p>대회 기출문제를 활용한<br>실전 모의고사 체험</p>
-              </li>
-              <li><router-link to="/problem_set/"></router-link></li>
-            </ul>
-          </div>
-          <div class="codemap-btn btn03">
-            <ul>
-              <li>
-                <h5>문제풀이</h5>
-                <p>각 문제 풀어보기</p>
-              </li>
-              <li><router-link to="/problem/"></router-link></li>
-            </ul>
-          </div>
+          <router-link to="/curriculum/">
+            <div class="codemap-btn btn01">
+              <ul>
+                <li>
+                  <h5>알고리즘</h5>
+                  <p>기초부터 고급까지<br>준비된 학습자료</p>
+                </li>
+              </ul>
+            </div>
+          </router-link>
+          <router-link to="/problem_set/">
+            <div class="codemap-btn btn02">
+              <ul>
+                <li>
+                  <h5>모의고사</h5>
+                  <p>대회 기출문제를 활용한<br>실전 모의고사 체험</p>
+                </li>
+              </ul>
+            </div>
+          </router-link>
+          <router-link to="/problem/">
+            <div class="codemap-btn btn03">
+              <ul>
+                <li>
+                  <h5>문제풀이</h5>
+                  <p>각 문제 풀어보기</p>
+                </li>
+              </ul>
+            </div>
+          </router-link>
         </div>
       </section>
       <section class="footer">
@@ -73,7 +82,6 @@
 
 <script>
 import StartContest from "@/components/StartContest";
-import api from "@/api";
 import {isLogin} from "@/api/token";
 import Navbar from "@/components/Navbar";
 
@@ -84,9 +92,7 @@ export default {
   
   },
   data() {
-    return {
-    
-    };
+    return {};
   },
   computed: {
     isLogin() {
@@ -192,6 +198,12 @@ export default {
   background: url(@/images/main-logo.svg) 50% no-repeat;
 }
 
+.codemap-btn ul {
+  margin: 0 auto;
+  text-align: center;
+  padding: 0;
+}
+
 .codemap-btns {
   display: flex;
   justify-content: space-between;
@@ -220,7 +232,8 @@ export default {
 
 .codemap-btns .codemap-btn ul {
   width: 100%;
-  display: flex;
+  height: 16vh;
+  /*display: flex;*/
   align-items: flex-end;
   justify-content: space-between;
 }
@@ -238,12 +251,12 @@ export default {
   font-weight: 300;
 }
 
-.codemap-btns .codemap-btn ul a {
-  display: block;
-  width: 42px;
-  height: 60px;
-  background: url(@/images/codemap-next.svg) 50% no-repeat;
-}
+/*.codemap-btns .codemap-btn ul a {*/
+/*  display: block;*/
+/*  width: 42px;*/
+/*  height: 60px;*/
+/*  !*background: url(@/images/codemap-next.svg) 50% no-repeat;*!*/
+/*}*/
 
 .footer {
   margin-top: 60px;
@@ -352,7 +365,16 @@ export default {
 </style>
 
 <style scoped>
-dl,ul,ol,menu,li {list-style:none}
-a {color:#333;text-decoration:none}
-a:active, a:hover {text-decoration:none}
+dl, ul, ol, menu, li {
+  list-style: none
+}
+
+a {
+  color: #333;
+  text-decoration: none
+}
+
+a:active, a:hover {
+  text-decoration: none
+}
 </style>
