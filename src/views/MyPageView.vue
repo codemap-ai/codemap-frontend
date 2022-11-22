@@ -34,6 +34,7 @@
 import api from "@/api";
 import Navbar from "@/components/Navbar";
 import Table from "@/components/Table.vue";
+import {isLogin} from "@/api/token";
 
 export default {
   name: "MyPageView",
@@ -47,6 +48,12 @@ export default {
     };
   },
   async created() {
+    if (!isLogin()) {
+      alert("로그인 후 이용하세요");
+      this.$router.push("/login");
+      return;
+    }
+    
     // this.kakao = await api.users.getKakaoInfo();
     this.user = await api.users.me();
     if (this.user?.image === "tmp") delete this.user.image;
